@@ -4,6 +4,7 @@
     <div class="mb-8 text-center">
         <h1 class="text-4xl font-bold text-primary mb-2">Doc Jay's Veterinary Clinic</h1>
         <p class="text-gray-600">Online Appointment Scheduling System</p>
+        <img src="{{ asset('images/DogCat.png') }}" alt="DogCat" class="mx-auto mt-4 w-32 h-32">
     </div>
 
     <!-- The Form Container -->

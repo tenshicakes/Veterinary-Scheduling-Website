@@ -16,9 +16,9 @@ class LandingPage extends Component
     public $isLogin = true; 
 
     // Form fields
-    public $fullname;
-    public $email;
-    public $password;
+    public string $fullname = '';
+    public string $email = '';
+    public string $password = '';
 
     public function toggleForm()
     {
