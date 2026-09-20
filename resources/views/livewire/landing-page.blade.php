@@ -82,10 +82,7 @@
                     </div>
                 </div>
 
-                <!-- Forgot Password -->
-                <div class="flex justify-end -mt-2">
-                    <a href="#" class="text-xs font-bold text-blue hover:underline">Forgot password?</a>
-                </div>
+                
 
                 <!-- Red Login Button -->
                 <button type="submit" class="w-full bg-red text-white font-bold py-3 rounded-lg mt-2 hover:bg-red-700 transition flex justify-center items-center gap-2 shadow-md">

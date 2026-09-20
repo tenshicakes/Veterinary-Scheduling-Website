@@ -1,6 +1,8 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Http\Request;
 use App\Livewire\User\Home as UserHome;
 use App\Livewire\Admin\Home as AdminHome;
 use App\Livewire\Assistant\Home as AssistantHome;
@@ -16,3 +18,11 @@ Route::middleware(['auth', \App\Http\Middleware\PreventBackHistory::class])->gro
     Route::get('/assistant/home', AssistantHome::class)->name('assistant.home');
     Route::get('/superadmin/home', SuperadminHome::class)->name('superadmin.home');
 });
+
+Route::post('/logout', function (Request $request) {
+    Auth::logout();
+    $request->session()->invalidate();
+    $request->session()->regenerateToken();
+    
+    return redirect('/');
+})->name('logout');
