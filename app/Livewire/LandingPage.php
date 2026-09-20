@@ -14,16 +14,21 @@ class LandingPage extends Component
 {
     // Toggle state
     public $isLogin = true; 
-
-    // Form fields
-    public string $fullname = '';
-    public string $email = '';
-    public string $password = '';
+    public $fullname, $email, $password;
+    
+    // The toggle variable for the eye icon
+    public $showPassword = false;
 
     public function toggleForm()
     {
         $this->isLogin = !$this->isLogin;
         $this->resetErrorBag();
+    }
+
+    // The method for the eye icon button
+    public function togglePassword()
+    {
+        $this->showPassword = !$this->showPassword;
     }
 
     public function authenticate()
@@ -44,7 +49,7 @@ class LandingPage extends Component
             return redirect()->route('user.home');
         }
 
-        $this->addError('email', 'These credentials do not match our records.');
+        $this->addError('auth_error', 'Invalid email or password.');
     }
 
     public function register()

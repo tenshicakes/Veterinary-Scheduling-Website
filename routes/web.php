@@ -10,7 +10,7 @@ use App\Livewire\LandingPage;
 Route::get('/', LandingPage::class)->name('landing.page');
 
 
-Route::middleware(['auth'])->group(function () {
+Route::middleware(['auth', \App\Http\Middleware\PreventBackHistory::class])->group(function () {
     Route::get('/user/home', UserHome::class)->name('user.home');
     Route::get('/admin/home', AdminHome::class)->name('admin.home');
     Route::get('/assistant/home', AssistantHome::class)->name('assistant.home');
