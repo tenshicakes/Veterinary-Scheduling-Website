@@ -1,4 +1,4 @@
-<div class="w-full md:w-1/2 bg-white border border-gray-200 rounded-xl p-4 md:p-6 shadow-sm flex flex-col">
+<div class="w-full bg-white border border-gray-200 rounded-xl p-4 md:p-6 shadow-sm flex flex-col">
                     <h4 class="font-bold text-lg text-gray-800 mb-4">Available Time Slots</h4>
                     
                     @if(!$selectedDate)

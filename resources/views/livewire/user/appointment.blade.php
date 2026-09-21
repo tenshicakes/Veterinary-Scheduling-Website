@@ -87,12 +87,15 @@
             <h3 class="text-xl font-bold text-gray-800 mb-4">Select Date and Time</h3>
             
             <div class="flex flex-col md:flex-row gap-6">
-                
                 <!-- LEFT SIDE: CALENDAR -->
-                @include('livewire.shared.calendar')
+                <div class="w-full md:w-1/2">
+                    @include('livewire.shared.calendar')
+                </div>
 
                 <!-- RIGHT SIDE: TIME SLOTS -->
-                @include('livewire.shared.timeslot')
+                <div class="w-full md:w-1/2">
+                    @include('livewire.shared.timeslot')
+                </div>
             </div>
 
         
