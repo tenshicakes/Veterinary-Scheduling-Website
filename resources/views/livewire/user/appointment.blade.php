@@ -5,11 +5,9 @@
         <h2 class="text-3xl font-extrabold text-blue mb-8 text-center">Book an Appointment</h2>
         
         <!-- 4-Step Progress Circles -->
-        <!-- CHANGED: items-start keeps circles at the top, top-5 centers the line perfectly at 20px -->
         <div class="relative flex justify-between items-start w-full before:absolute before:left-0 before:right-0 before:top-5 before:-translate-y-1/2 before:h-1 before:bg-gray-200 before:z-0">
             
             <!-- Step 1: Pet -->
-            <!-- ADDED: w-20 to standardize the width so the text centers cleanly under the circle -->
             <div class="relative z-10 flex flex-col items-center gap-2 w-20">
                 <div class="w-10 h-10 rounded-full flex items-center justify-center font-bold {{ $currentStep >= 1 ? 'bg-blue text-white shadow-md' : 'bg-gray-200 text-gray-500' }} transition">1</div>
                 <span class="text-xs font-bold text-center {{ $currentStep >= 1 ? 'text-primary' : 'text-gray-400' }}">Choose Pet</span>
