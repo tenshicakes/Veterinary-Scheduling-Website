@@ -72,7 +72,7 @@ class LandingPage extends Component
             'fullname' => 'required|string|max:255',
             'email' => 'required|email|unique:users_table,email',
             'password' => 'required|min:8',
-            'phone_number' => 'nullable|int|max:20',
+            'phone_number' => 'nullable|string|max:20|regex:/^[0-9+\-\s()]+$/',
             'address' => 'nullable|string|max:255',
         ]);
 

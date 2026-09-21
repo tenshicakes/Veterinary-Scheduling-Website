@@ -3,7 +3,7 @@
 <!-- Left Side: Branding -->
 <div class="w-full md:w-1/2 bg-primary flex flex-col pt-8 md:pt-12 relative overflow-hidden">
     
-    <!-- Text Content: Changed to left alignment (items-start and text-left) -->
+    <!-- Text Content -->
     <div class="text-left px-8 md:px-12 z-10 flex flex-col items-start">
         
         <!-- Logo: (h-24 on mobile, h-32 on desktop) -->
