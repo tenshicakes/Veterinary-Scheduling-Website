@@ -71,8 +71,8 @@ class LandingPage extends Component
         $this->validate([
             'fullname' => 'required|string|max:255',
             'email' => 'required|email|unique:users_table,email',
-            'password' => 'required|min:6',
-            'phone_number' => 'nullable|string|max:20',
+            'password' => 'required|min:8',
+            'phone_number' => 'nullable|int|max:20',
             'address' => 'nullable|string|max:255',
         ]);
 
