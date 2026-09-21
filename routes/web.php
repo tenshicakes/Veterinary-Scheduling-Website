@@ -1,10 +1,10 @@
 <?php
 
 use App\Http\Middleware\PreventBackHistory;
+use App\Livewire\LandingPage;
 use App\Livewire\Admin\Home as AdminHome;
 use App\Livewire\Assistant\Appointments as AssistantAppointments;
 use App\Livewire\Assistant\Home as AssistantHome;
-use App\Livewire\LandingPage;
 use App\Livewire\Superadmin\Home as SuperadminHome;
 use App\Livewire\User\Appointment as UserAppointment;
 use App\Livewire\User\Home as UserHome;
