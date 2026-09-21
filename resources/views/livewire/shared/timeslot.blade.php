@@ -10,7 +10,7 @@
                             @forelse($timeSlots as $slot)
                                 <div wire:click="$set('selectedTime', '{{ $slot }}')" 
                                      class="cursor-pointer border rounded-lg p-3 text-center font-bold text-sm transition hover:shadow-md 
-                                     {{ $selectedTime === $slot ? 'bg-primary text-surface border-primary' : 'bg-surface text-gray-700 border-gray-200' }}">
+                                     {{ $selectedTime === $slot ? 'bg-blue text-white border-primary' : 'bg-surface text-gray-700 border-gray-200' }}">
                                     {{ $slot }}
                                 </div>
                             @empty
