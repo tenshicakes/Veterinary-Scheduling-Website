@@ -6,9 +6,11 @@ use Illuminate\Http\Request;
 use App\Livewire\User\Home as UserHome;
 use App\Livewire\User\Appointment as UserAppointment;
 
+
 use App\Livewire\Admin\Home as AdminHome;
 
 use App\Livewire\Assistant\Home as AssistantHome;
+use App\Livewire\Assistant\Appointments as AssistantAppointments;
 
 use App\Livewire\Superadmin\Home as SuperadminHome;
 
@@ -25,7 +27,8 @@ Route::middleware(['auth', \App\Http\Middleware\PreventBackHistory::class])->gro
     Route::get('/admin/home', AdminHome::class)->name('admin.home');
 
     Route::get('/assistant/home', AssistantHome::class)->name('assistant.home');
-
+    Route::get('/assistant/appointments', AssistantAppointments::class)->name('assistant.appointments');
+    
     Route::get('/superadmin/home', SuperadminHome::class)->name('superadmin.home');
 });
 
