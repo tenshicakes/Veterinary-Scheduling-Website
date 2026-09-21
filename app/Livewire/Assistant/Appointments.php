@@ -17,6 +17,16 @@ class Appointments extends Component
     public $activeTab = 'Pending'; // Pending as the default
     public $sortFilter = 'newest_request';
 
+    // --- RESCHEDULE MODAL VARIABLES ---
+    public $isRescheduling = false;
+    public $rescheduleApptId = null;
+    public $reschedulePatientName = '';
+    
+    // --- SHARED CALENDAR VARIABLES ---
+    public $monthOffset = 0;
+    public $selectedDate = null;
+    public $selectedTime = null;
+
     public function updatingSearch()
     {
         $this->resetPage();
@@ -34,10 +44,118 @@ class Appointments extends Component
         $this->resetPage();
     }
 
-    // I added a single, reusable method to handle all status changes without writing 5 different functions
+    // added a single, reusable method to handle all status changes without writing 5 different functions
     public function updateStatus($id, $newStatus)
     {
         AppointmentModel::where('appointmentID', $id)->update(['status' => $newStatus]);
+    }
+
+    // --- RESCHEDULE LOGIC ---
+
+    // Opens the modal and saves which appointment we are moving
+    public function openRescheduleModal($id, $patientName)
+    {
+        $this->rescheduleApptId = $id;
+        $this->reschedulePatientName = $patientName;
+        $this->isRescheduling = true;
+        
+        // Reset the calendar selections for a fresh start
+        $this->monthOffset = 0;
+        $this->selectedDate = null;
+        $this->selectedTime = null;
+        $this->resetErrorBag();
+    }
+
+    // Closes the modal
+    public function closeRescheduleModal()
+    {
+        $this->isRescheduling = false;
+        $this->rescheduleApptId = null;
+    }
+
+    // Saves the new date and time to the database
+    public function confirmReschedule()
+    {
+        if (!$this->selectedDate || !$this->selectedTime) {
+            $this->addError('reschedule', 'Please select both a new date and time.');
+            return;
+        }
+
+        AppointmentModel::where('appointmentID', $this->rescheduleApptId)->update([
+            'appointmentdate' => $this->selectedDate,
+            'appointmenttime' => Carbon::parse($this->selectedTime)->format('H:i:s'),
+            'status' => 'Approved' // Automatically approve it since the clinic staff handled it
+        ]);
+
+        $this->closeRescheduleModal();
+        session()->flash('success', 'Appointment successfully rescheduled!');
+    }
+
+    // --- SHARED CALENDAR METHODS (Copied from User side) ---
+
+    public function nextMonth()
+    {
+        $this->monthOffset++;
+        $this->selectedDate = null;
+        $this->selectedTime = null;
+    }
+
+    public function previousMonth()
+    {
+        if ($this->monthOffset > 0) {
+            $this->monthOffset--;
+            $this->selectedDate = null;
+            $this->selectedTime = null;
+        }
+    }
+
+    public function selectDate($date)
+    {
+        $this->selectedDate = $date;
+        $this->selectedTime = null;
+        $this->resetErrorBag('reschedule');
+    }
+
+    public function getUnavailableDates()
+    {
+        return AppointmentModel::select('appointmentdate')
+            ->whereIn('status', ['Pending', 'Approved'])
+            ->groupBy('appointmentdate')
+            ->havingRaw('COUNT(*) >= 9')
+            ->pluck('appointmentdate')
+            ->toArray();
+    }
+
+    public function getAvailableTimeSlots()
+    {
+        if (!$this->selectedDate) return [];
+
+        $allSlots = ['09:00 AM', '10:00 AM', '11:00 AM', '12:00 PM', '01:00 PM', '02:00 PM', '03:00 PM', '04:00 PM', '05:00 PM'];
+        
+        $bookedRecords = AppointmentModel::where('appointmentdate', $this->selectedDate)
+            ->whereIn('status', ['Pending', 'Approved'])
+            ->pluck('appointmenttime')
+            ->toArray();
+
+        $bookedSlots = array_map(function($time) {
+            return Carbon::parse($time)->format('h:i A');
+        }, $bookedRecords);
+
+        $availableSlots = [];
+        $now = Carbon::now();
+        $isToday = $this->selectedDate === $now->format('Y-m-d');
+
+        foreach ($allSlots as $slot) {
+            if (in_array($slot, $bookedSlots)) continue;
+            
+            if ($isToday) {
+                $slotExpirationTime = Carbon::parse($this->selectedDate . ' ' . $slot)->addMinutes(30);
+                if ($now->isAfter($slotExpirationTime)) continue;
+            }
+            $availableSlots[] = $slot;
+        }
+
+        return $availableSlots;
     }
 
     public function render()
@@ -91,8 +209,23 @@ class Appointments extends Component
 
         $appointments = $query->paginate(10);
 
+        // --- SHARED CALENDAR RENDER MATH ---
+        $today = Carbon::today();
+        $startOfMonth = Carbon::now()->addMonths($this->monthOffset)->startOfMonth();
+        $daysInMonth = $startOfMonth->daysInMonth;
+        $firstDayOfWeek = $startOfMonth->dayOfWeek;
+        $currentMonthName = $startOfMonth->format('F Y');
+        $currentYearMonth = $startOfMonth->format('Y-m');
+
         return view('livewire.assistant.appointments', [
-            'appointments' => $appointments
+            'appointments' => $appointments,
+            'daysInMonth' => $daysInMonth,
+            'firstDayOfWeek' => $firstDayOfWeek,
+            'currentMonthName' => $currentMonthName,
+            'currentYearMonth' => $currentYearMonth,
+            'today' => $today,
+            'unavailableDates' => $this->getUnavailableDates(),
+            'timeSlots' => $this->getAvailableTimeSlots(),
         ]);
     }
 }

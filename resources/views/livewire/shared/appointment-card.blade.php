@@ -54,12 +54,16 @@
                 <!-- Action Buttons -->
                 <div class="flex flex-wrap gap-2 mt-2">
                     @if($appt->status == 'Pending')
-                        <button wire:click="updateStatus({{ $appt->appointmentID }}, 'Approved')" class="flex-1 bg-primary text-surface font-bold py-2 rounded shadow hover:bg-blue hover:text-white transition text-sm">Approve</button>
-                        <button wire:click="updateStatus({{ $appt->appointmentID }}, 'Rejected')" class="flex-1 bg-red text-white font-bold py-2 rounded shadow hover:bg-red transition text-sm">Reject</button>
+                        <button wire:click="updateStatus({{ $appt->appointmentID }}, 'Approved')" class="flex-1 bg-primary text-surface font-bold py-2 rounded shadow hover:bg-blue-800 transition text-sm">Approve</button>
+                        <!-- Added Reschedule Button -->
+                        <button wire:click="openRescheduleModal({{ $appt->appointmentID }}, '{{ $appt->patient_name ?? 'Unknown Owner' }}')" class="flex-1 bg-blue-400 text-white font-bold py-2 rounded shadow hover:bg-blue-500 transition text-sm">Reschedule</button>
+                        <button wire:click="updateStatus({{ $appt->appointmentID }}, 'Rejected')" class="flex-1 bg-red-500 text-white font-bold py-2 rounded shadow hover:bg-red-600 transition text-sm">Reject</button>
                     @elseif($appt->status == 'Approved')
                         <button wire:click="updateStatus({{ $appt->appointmentID }}, 'Completed')" class="flex-1 bg-gray-800 text-white font-bold py-2 rounded shadow hover:bg-gray-900 transition text-sm">Complete</button>
                         <button wire:click="updateStatus({{ $appt->appointmentID }}, 'No-Show')" class="flex-1 bg-orange-500 text-white font-bold py-2 rounded shadow hover:bg-orange-600 transition text-sm">No-Show</button>
-                        <button wire:click="updateStatus({{ $appt->appointmentID }}, 'Cancelled')" class="flex-1 bg-red text-white font-bold py-2 rounded shadow hover:bg-red transition text-sm">Cancel</button>
+                        <!-- Added Reschedule Button -->
+                        <button wire:click="openRescheduleModal({{ $appt->appointmentID }}, '{{ $appt->patient_name ?? 'Unknown Owner' }}')" class="flex-1 bg-blue-400 text-white font-bold py-2 rounded shadow hover:bg-blue-500 transition text-sm">Reschedule</button>
+                        <button wire:click="updateStatus({{ $appt->appointmentID }}, 'Cancelled')" class="flex-1 bg-red-500 text-white font-bold py-2 rounded shadow hover:bg-red-600 transition text-sm">Cancel</button>
                     @endif
                 </div>
                 
