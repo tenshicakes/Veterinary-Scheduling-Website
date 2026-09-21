@@ -2,32 +2,36 @@
 
 namespace App\Livewire\User;
 
-use Livewire\Component;
-use Livewire\Attributes\Layout;
-// Bringing in the models so I can talk to my custom tables
-use Illuminate\Support\Facades\Auth;
-use App\Models\Info; // Maps to info_table
-use App\Models\Service; // Maps to service_table
 use App\Models\Appointment as AppointmentModel;
-use Carbon\Carbon; // Laravel's built-in date tool for the calendar
+use App\Models\Info;
+// Bringing in the models so I can talk to my custom tables
+use App\Models\Service;
+use Carbon\Carbon; // Maps to info_table
+use Illuminate\Support\Facades\Auth; // Maps to service_table
+use Livewire\Attributes\Layout;
+use Livewire\Component; // Laravel's built-in date tool for the calendar
 
 #[Layout('layouts.usermaster')]
 class Appointment extends Component
 {
     // Tracking which step of the 4-step wizard the user is currently on
     public $currentStep = 1;
-    
+
     // Variables to hold whatever the user clicks so we can save it later
     public $selectedPet = null;
+
     public $selectedService = null;
+
     public $selectedDate = null;
+
     public $selectedTime = null;
-    
+
     // Counter for the calendar (0 = current month, 1 = next month, etc.)
     public $monthOffset = 0;
 
     // Step 4 inputs for payment and extra instructions
     public $referenceNumber = '';
+
     public $notes = '';
 
     // --- CALENDAR NAVIGATION ---
@@ -64,17 +68,19 @@ class Appointment extends Component
             ->pluck('appointmentdate')
             ->toArray();
 
-            return $fullyBookedDates;
+        return $fullyBookedDates;
     }
 
     public function getAvailableTimeSlots()
     {
         // 1. If no date is clicked yet on the calendar, show nothing
-        if (!$this->selectedDate) return [];
+        if (! $this->selectedDate) {
+            return [];
+        }
 
         // 2. The baseline clinic schedule
         $allSlots = ['09:00 AM', '10:00 AM', '11:00 AM', '12:00 PM', '01:00 PM', '02:00 PM', '03:00 PM', '04:00 PM', '05:00 PM'];
-        
+
         // 3. Query the database for slots already taken on this specific date
         $bookedRecords = AppointmentModel::where('appointmentdate', $this->selectedDate)
             ->whereIn('status', ['Pending', 'Approved'])
@@ -82,7 +88,7 @@ class Appointment extends Component
             ->toArray();
 
         // Convert DB military time (e.g., 13:00:00) back to 12hr format (01:00 PM) so we can compare it
-        $bookedSlots = array_map(function($time) {
+        $bookedSlots = array_map(function ($time) {
             return Carbon::parse($time)->format('h:i A');
         }, $bookedRecords);
 
@@ -92,20 +98,20 @@ class Appointment extends Component
 
         // 4. Loop through the baseline schedule and filter it
         foreach ($allSlots as $slot) {
-            
+
             // If the slot is already in the booked list from the database, skip it!
             if (in_array($slot, $bookedSlots)) {
                 continue;
             }
-            
+
             // Check the 30-minute expiration rule for today's current time
-            if ($isToday) { 
-                $slotExpirationTime = Carbon::parse($this->selectedDate . ' ' . $slot)->addMinutes(30);
+            if ($isToday) {
+                $slotExpirationTime = Carbon::parse($this->selectedDate.' '.$slot)->addMinutes(30);
                 if ($now->isAfter($slotExpirationTime)) {
                     continue;
                 }
             }
-            
+
             // If it passed all checks, add it to the available buttons
             $availableSlots[] = $slot;
         }
@@ -117,10 +123,9 @@ class Appointment extends Component
     public function selectDate($date)
     {
         $this->selectedDate = $date;
-        $this->selectedTime = null; 
+        $this->selectedTime = null;
         $this->resetErrorBag('selection'); // Clear any red error text
     }
-    
 
     // --- WIZARD NAVIGATION ---
 
@@ -128,20 +133,23 @@ class Appointment extends Component
     public function nextStep()
     {
         // Step 1 check: Did they pick a pet?
-        if ($this->currentStep == 1 && !$this->selectedPet) {
+        if ($this->currentStep == 1 && ! $this->selectedPet) {
             $this->addError('selection', 'Please select a pet to continue.');
+
             return;
         }
-        
+
         // Step 2 check: Did they pick a service?
-        if ($this->currentStep == 2 && !$this->selectedService) {
+        if ($this->currentStep == 2 && ! $this->selectedService) {
             $this->addError('selection', 'Please select a service to continue.');
+
             return;
         }
 
         // Step 3 check: Did they pick both date and time?
-        if ($this->currentStep == 3 && (!$this->selectedDate || !$this->selectedTime)) {
+        if ($this->currentStep == 3 && (! $this->selectedDate || ! $this->selectedTime)) {
             $this->addError('selection', 'Please select both an available date and time.');
+
             return;
         }
 
@@ -165,21 +173,22 @@ class Appointment extends Component
         // 1. Make sure they typed in the Instapay reference number
         $this->validate([
             'referenceNumber' => 'required|string|max:255',
-            'notes' => 'nullable|string|max:1000'
+            'notes' => 'nullable|string|max:1000',
         ], [
-            'referenceNumber.required' => 'Please provide the payment reference number to proceed.'
+            'referenceNumber.required' => 'Please provide the payment reference number to proceed.',
         ]);
 
         // 2. Just a final backup check so it doesn't crash the database if something is missing
-        if (!$this->selectedPet || !$this->selectedService || !$this->selectedDate || !$this->selectedTime) {
+        if (! $this->selectedPet || ! $this->selectedService || ! $this->selectedDate || ! $this->selectedTime) {
             $this->addError('selection', 'Missing information. Please go back and check your selections.');
+
             return;
         }
 
         // 3. Combine the Ref Number and extra notes into one string so it fits in the single 'notes' column
-        $combinedNotes = "Payment Ref: " . $this->referenceNumber;
-        if (!empty($this->notes)) {
-            $combinedNotes .= " | Extra Notes: " . $this->notes;
+        $combinedNotes = 'Payment Ref: '.$this->referenceNumber;
+        if (! empty($this->notes)) {
+            $combinedNotes .= ' | Extra Notes: '.$this->notes;
         }
 
         // 4. Save everything directly to the appointment_table in MySQL
@@ -189,15 +198,15 @@ class Appointment extends Component
             'serviceID' => $this->selectedService,
             'appointmentdate' => $this->selectedDate,
             'appointmenttime' => Carbon::parse($this->selectedTime)->format('H:i:s'), // Format to 24hr for MySQL
-            'status' => 'Pending', 
-            'notes' => $combinedNotes
+            'status' => 'Pending',
+            'notes' => $combinedNotes,
         ]);
 
         // 5. Done! Clear the form and send them back to their dashboard with a green success message
         session()->flash('success', 'Your appointment request is pending payment verification!');
+
         return redirect()->route('user.home');
     }
-
 
     // --- PAGE RENDER ---
 

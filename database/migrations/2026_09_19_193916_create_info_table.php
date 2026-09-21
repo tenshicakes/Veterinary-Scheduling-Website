@@ -11,7 +11,6 @@ return new class extends Migration
         Schema::create('info_table', function (Blueprint $table) {
             $table->id('infoID');
             $table->foreignId('userID')->constrained('users_table', 'userID')->onDelete('cascade');
-            $table->string('number');
             $table->string('petname');
             $table->string('petspecies'); // Cat or Dog
             $table->string('petbreed')->nullable();

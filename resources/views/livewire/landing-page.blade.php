@@ -52,7 +52,8 @@
             <form wire:submit="authenticate" class="flex flex-col gap-5">
                 <!-- Email Field -->
                 <div>
-                    <label class="block text-sm font-bold text-blue mb-2">Email or Phone Number</label>
+            
+                    <label class="block text-sm font-bold text-blue mb-2">Email Address</label>
                     <div class="relative">
                         <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
                             <!-- Mail Icon -->
@@ -118,6 +119,24 @@
                         <input type="email" wire:model="email" class="w-full px-4 py-3 border border-gray-200 rounded-lg focus:outline-none focus:border-primary shadow-[0_4px_10px_-2px_rgba(0,0,0,0.08)]" placeholder="Enter your email" required>
                     </div>
                     @error('email') <span class="text-red-500 text-xs mt-1 block">{{ $message }}</span> @enderror
+                </div>
+
+                <!-- ADDED: Phone Number -->
+                <div>
+                    <label class="block text-sm font-bold text-blue mb-2">Phone Number</label>
+                    <div class="relative">
+                        <input type="text" wire:model="phone_number" class="w-full px-4 py-3 border border-gray-200 rounded-lg focus:outline-none focus:border-primary shadow-[0_4px_10px_-2px_rgba(0,0,0,0.08)]" placeholder="09123456789" required>
+                    </div>
+                    @error('phone_number') <span class="text-red-500 text-xs mt-1 block">{{ $message }}</span> @enderror
+                </div>
+
+                <!-- ADDED: Address (Optional) -->
+                <div>
+                    <label class="block text-sm font-bold text-blue mb-2">Address <span class="text-gray-400 font-normal">(Optional)</span></label>
+                    <div class="relative">
+                        <input type="text" wire:model="address" class="w-full px-4 py-3 border border-gray-200 rounded-lg focus:outline-none focus:border-primary shadow-[0_4px_10px_-2px_rgba(0,0,0,0.08)]" placeholder="Marikina City">
+                    </div>
+                    @error('address') <span class="text-red-500 text-xs mt-1 block">{{ $message }}</span> @enderror
                 </div>
 
                 <div>

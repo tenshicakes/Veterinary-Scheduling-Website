@@ -2,11 +2,11 @@
 
 namespace App\Livewire\Assistant;
 
-use Livewire\Component;
-use Livewire\WithPagination; // I added this to prevent lag when history gets huge
-use Livewire\Attributes\Layout;
 use App\Models\Appointment as AppointmentModel;
-use Carbon\Carbon;
+use Carbon\Carbon; // I added this to prevent lag when history gets huge
+use Livewire\Attributes\Layout;
+use Livewire\Component;
+use Livewire\WithPagination;
 
 #[Layout('layouts.assistantmaster')]
 class Appointments extends Component
@@ -14,17 +14,23 @@ class Appointments extends Component
     use WithPagination; // Allows us to use ->paginate(10) safely
 
     public $search = '';
+
     public $activeTab = 'Pending'; // Pending as the default
+
     public $sortFilter = 'newest_request';
 
     // --- RESCHEDULE MODAL VARIABLES ---
     public $isRescheduling = false;
+
     public $rescheduleApptId = null;
+
     public $reschedulePatientName = '';
-    
+
     // --- SHARED CALENDAR VARIABLES ---
     public $monthOffset = 0;
+
     public $selectedDate = null;
+
     public $selectedTime = null;
 
     public function updatingSearch()
@@ -58,7 +64,7 @@ class Appointments extends Component
         $this->rescheduleApptId = $id;
         $this->reschedulePatientName = $patientName;
         $this->isRescheduling = true;
-        
+
         // Reset the calendar selections for a fresh start
         $this->monthOffset = 0;
         $this->selectedDate = null;
@@ -76,15 +82,16 @@ class Appointments extends Component
     // Saves the new date and time to the database
     public function confirmReschedule()
     {
-        if (!$this->selectedDate || !$this->selectedTime) {
+        if (! $this->selectedDate || ! $this->selectedTime) {
             $this->addError('reschedule', 'Please select both a new date and time.');
+
             return;
         }
 
         AppointmentModel::where('appointmentID', $this->rescheduleApptId)->update([
             'appointmentdate' => $this->selectedDate,
             'appointmenttime' => Carbon::parse($this->selectedTime)->format('H:i:s'),
-            'status' => 'Approved' // Automatically approve it since the clinic staff handled it
+            'status' => 'Approved', // Automatically approve it since the clinic staff handled it
         ]);
 
         $this->closeRescheduleModal();
@@ -128,16 +135,18 @@ class Appointments extends Component
 
     public function getAvailableTimeSlots()
     {
-        if (!$this->selectedDate) return [];
+        if (! $this->selectedDate) {
+            return [];
+        }
 
         $allSlots = ['09:00 AM', '10:00 AM', '11:00 AM', '12:00 PM', '01:00 PM', '02:00 PM', '03:00 PM', '04:00 PM', '05:00 PM'];
-        
+
         $bookedRecords = AppointmentModel::where('appointmentdate', $this->selectedDate)
             ->whereIn('status', ['Pending', 'Approved'])
             ->pluck('appointmenttime')
             ->toArray();
 
-        $bookedSlots = array_map(function($time) {
+        $bookedSlots = array_map(function ($time) {
             return Carbon::parse($time)->format('h:i A');
         }, $bookedRecords);
 
@@ -146,11 +155,15 @@ class Appointments extends Component
         $isToday = $this->selectedDate === $now->format('Y-m-d');
 
         foreach ($allSlots as $slot) {
-            if (in_array($slot, $bookedSlots)) continue;
-            
+            if (in_array($slot, $bookedSlots)) {
+                continue;
+            }
+
             if ($isToday) {
-                $slotExpirationTime = Carbon::parse($this->selectedDate . ' ' . $slot)->addMinutes(30);
-                if ($now->isAfter($slotExpirationTime)) continue;
+                $slotExpirationTime = Carbon::parse($this->selectedDate.' '.$slot)->addMinutes(30);
+                if ($now->isAfter($slotExpirationTime)) {
+                    continue;
+                }
             }
             $availableSlots[] = $slot;
         }
@@ -167,30 +180,36 @@ class Appointments extends Component
 
         // 2. Figure out which statuses to load based on the clicked tab
         $statuses = [];
-        if ($this->activeTab == 'Pending') $statuses = ['Pending'];
-        if ($this->activeTab == 'Upcoming') $statuses = ['Approved'];
-        if ($this->activeTab == 'History') $statuses = ['Completed', 'Cancelled', 'No-Show', 'Rejected'];
+        if ($this->activeTab == 'Pending') {
+            $statuses = ['Pending'];
+        }
+        if ($this->activeTab == 'Upcoming') {
+            $statuses = ['Approved'];
+        }
+        if ($this->activeTab == 'History') {
+            $statuses = ['Completed', 'Cancelled', 'No-Show', 'Rejected'];
+        }
 
         // 3. I used standard SQL Joins here to pull the Patient Name, Pet Name, and Service Price directly.
         // This avoids complex Eloquent Model Shenanigans and keeps everything flat and easy to read.
         // 3. I used standard SQL Joins here to pull the Patient Name, Pet Name, and Service Price directly.
         $query = AppointmentModel::select(
-                'appointment_table.*',
-                'users_table.fullname as patient_name',
-                'info_table.petname as pet_name',
-                'service_table.servicename as service_name',
-                'service_table.price as service_price'
-            )
+            'appointment_table.*',
+            'users_table.fullname as patient_name',
+            'info_table.petname as pet_name',
+            'service_table.servicename as service_name',
+            'service_table.price as service_price'
+        )
             ->leftJoin('users_table', 'appointment_table.userID', '=', 'users_table.userID')
             ->leftJoin('info_table', 'appointment_table.infoID', '=', 'info_table.infoID')
             ->leftJoin('service_table', 'appointment_table.serviceID', '=', 'service_table.serviceID')
             ->whereIn('appointment_table.status', $statuses);
 
         // 4. If they typed something in the search bar, filter the results in real-time
-        if (!empty($this->search)) {
-            $query->where(function($q) {
-                $q->where('users_table.fullname', 'like', '%' . $this->search . '%')
-                  ->orWhere('appointment_table.notes', 'like', '%' . $this->search . '%');
+        if (! empty($this->search)) {
+            $query->where(function ($q) {
+                $q->where('users_table.fullname', 'like', '%'.$this->search.'%')
+                    ->orWhere('appointment_table.notes', 'like', '%'.$this->search.'%');
             });
         }
 
@@ -201,10 +220,10 @@ class Appointments extends Component
             $query->orderBy('appointment_table.created_at', 'asc'); // Oldest bookings first
         } elseif ($this->sortFilter == 'nearest_appt') {
             $query->orderBy('appointment_table.appointmentdate', 'asc') // Nearest clinic visit
-                  ->orderBy('appointment_table.appointmenttime', 'asc');
+                ->orderBy('appointment_table.appointmenttime', 'asc');
         } elseif ($this->sortFilter == 'farthest_appt') {
             $query->orderBy('appointment_table.appointmentdate', 'desc') // Furthest clinic visit
-                  ->orderBy('appointment_table.appointmenttime', 'desc');
+                ->orderBy('appointment_table.appointmenttime', 'desc');
         }
 
         $appointments = $query->paginate(10);
