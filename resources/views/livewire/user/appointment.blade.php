@@ -55,8 +55,14 @@
                          {{ $selectedPet == $pet->infoID ? 'border-primary bg-blue-50' : 'border-gray-200 bg-surface' }}">
                         
                         <!-- Placeholder for Pet Image -->
-                        <div class="w-20 h-20 bg-gray-200 rounded-full overflow-hidden">
-                            <img src="{{ asset('images/DogCat.png') }}" alt="Pet" class="w-full h-full object-cover">
+                        <div class="w-20 h-20 bg-gray-200 rounded-full overflow-hidden shrink-0 border border-gray-100">
+                            
+                            <!-- if 'petimage' exists in the database, it loads from Laravel's storage. If null, it uses the default image. -->
+                            @if($pet->petimage)
+                                <img src="{{ asset('storage/' . $pet->petimage) }}" alt="{{ $pet->petname }}" class="w-full h-full object-cover">
+                            @else
+                                <img src="{{ asset('images/DogCat.png') }}" alt="Default Pet" class="w-full h-full object-cover">
+                            @endif
                         </div>
                         
                         <div class="text-center">
