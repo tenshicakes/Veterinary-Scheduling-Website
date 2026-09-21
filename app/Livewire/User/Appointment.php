@@ -98,8 +98,8 @@ class Appointment extends Component
                 continue;
             }
             
-            // Check our 30-minute expiration rule for today's current time
-            if ($isToday) {
+            // Check the 30-minute expiration rule for today's current time
+            if ($isToday) { 
                 $slotExpirationTime = Carbon::parse($this->selectedDate . ' ' . $slot)->addMinutes(30);
                 if ($now->isAfter($slotExpirationTime)) {
                     continue;
