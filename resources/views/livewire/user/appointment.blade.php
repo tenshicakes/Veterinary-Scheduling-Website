@@ -56,7 +56,7 @@
                         
                         <!-- Placeholder for Pet Image -->
                         <div class="w-20 h-20 bg-gray-200 rounded-full overflow-hidden shrink-0 border border-gray-100">
-                            
+
                             <!-- if 'petimage' exists in the database, it loads from Laravel's storage. If null, it uses the default image. -->
                             @if($pet->petimage)
                                 <img src="{{ asset('storage/' . $pet->petimage) }}" alt="{{ $pet->petname }}" class="w-full h-full object-cover">
