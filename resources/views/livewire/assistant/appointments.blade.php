@@ -46,8 +46,12 @@
 
     <!-- RESCHEDULE MODAL OVERLAY -->
     @if($isRescheduling)
-        <div class="fixed inset-0 bg-gray-900/60 z-50 flex items-center justify-center p-4 overflow-y-auto">
-            <div class="bg-surface rounded-xl shadow-2xl w-full max-w-4xl p-6 md:p-8 mt-10 md:mt-0">
+        <div class="fixed inset-0 z-50 flex items-center justify-center p-4 overflow-y-auto">
+            <!-- Dark backdrop -->
+            <div class="fixed inset-0 bg-gray-900/60" wire:click="closeRescheduleModal"></div>
+
+            <!-- Modal Content Card -->
+            <div class="relative bg-white rounded-xl shadow-2xl w-full max-w-4xl p-6 md:p-8 my-8 z-10 max-h-[90vh] overflow-y-auto">
                 
                 <div class="flex justify-between items-center mb-6 border-b border-gray-200 pb-4">
                     <h3 class="text-2xl font-extrabold text-primary">Reschedule Appointment</h3>
@@ -65,20 +69,20 @@
                     </div>
                 @enderror
 
-                <!-- Reusing your exact shared components directly inside the modal -->
-                <div class="flex flex-col md:flex-row gap-6 mb-8">
-                    <div class="w-full md:w-1/2">
+                <!-- Reusing shared components -->
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+                    <div>
                         @include('livewire.shared.calendar')
                     </div>
                     
-                    <div class="w-full md:w-1/2">
+                    <div>
                         @include('livewire.shared.timeslot')
                     </div>
                 </div>
 
                 <div class="flex justify-end gap-3 border-t border-gray-200 pt-4">
                     <button wire:click="closeRescheduleModal" class="px-6 py-2 rounded-lg font-bold text-gray-600 bg-gray-100 hover:bg-gray-200 transition">Cancel</button>
-                    <button wire:click="confirmReschedule" class="px-6 py-2 rounded-lg font-bold text-surface bg-primary hover:opacity-90 shadow-md transition">Confirm Reschedule</button>
+                    <button wire:click="confirmReschedule" class="px-6 py-2 rounded-lg font-bold text-white bg-blue hover:opacity-90 shadow-md transition">Confirm Reschedule</button>
                 </div>
 
             </div>
