@@ -51,6 +51,7 @@
                     @endif
                 </div>
 
+                @if(!isset($isUserView))
                 <!-- Action Buttons -->
                 <div class="flex flex-wrap gap-2 mt-3 pt-3 border-t border-gray-100">
                     @if($appt->status == 'Pending')
@@ -87,6 +88,7 @@
                                 class="flex-1 min-w-18.75 bg-red-500 text-white font-bold py-1.5 px-2 rounded shadow-sm hover:bg-red-600 transition text-xs">Cancel</button>
                     @endif
                 </div>
+                @endif
                 
             </div>
         @empty

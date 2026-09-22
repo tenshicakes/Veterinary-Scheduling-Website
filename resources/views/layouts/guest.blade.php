@@ -6,6 +6,19 @@
     <title>Doc Jay's Vet Clinic</title>
     @vite('resources/css/app.css') 
     @livewireStyles
+    <script>
+        // Prevent back navigation after logout
+        (function() {
+            var params = new URLSearchParams(window.location.search);
+            if (params.get('logout') === '1') {
+                history.replaceState(null, '', '/');
+                history.pushState(null, '', '/');
+                window.addEventListener('popstate', function() {
+                    history.pushState(null, '', '/');
+                });
+            }
+        })();
+    </script>
 </head>
 <body class="bg-background">
     {{ $slot }}

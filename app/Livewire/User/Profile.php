@@ -1,7 +1,5 @@
 <?php
-
 namespace App\Livewire\User;
-
 use Livewire\Component;
 use App\Models\Info;
 use App\Models\Appointment;
@@ -55,6 +53,7 @@ class Profile extends Component
         $this->email = $user->email;
         $this->phone_number = $user->phone_number;
         $this->address = $user->address;
+        $this->activeTab = request()->query('tab', 'profile');
     }
 
     public function updateProfile()

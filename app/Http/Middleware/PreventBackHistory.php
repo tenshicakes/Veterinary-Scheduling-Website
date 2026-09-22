@@ -4,11 +4,17 @@ namespace App\Http\Middleware;
 
 use Closure;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class PreventBackHistory
 {
     public function handle(Request $request, Closure $next)
     {
+        // If user is not authenticated but trying to access protected page
+        if (!Auth::check() && !$request->is('/') && !$request->is('logout')) {
+            return redirect()->route('landing.page');
+        }
+
         $response = $next($request);
 
         // tells Chrome/Edge/Safari not to save the page in the back-button history

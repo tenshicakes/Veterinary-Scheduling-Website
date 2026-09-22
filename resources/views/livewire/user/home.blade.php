@@ -7,7 +7,7 @@
             <p class="text-gray-500 mt-1 font-medium">Here is an overview of your upcoming clinic visits.</p>
         </div>
         
-        <a href="{{ route('user.appointment') }}" wire:navigate class="bg-blue text-white font-bold py-3 px-6 rounded-lg shadow-md hover:opacity-90 transition flex items-center gap-2">
+        <a href="{{ route('user.appointment') }}" wire:navigate class="bg-blue text-white font-bold py-3 px-6 rounded-lg shadow-md hover:bg-blue/90 transition flex items-center gap-2">
             <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="M12 5v14"/></svg>
             Book New Appointment
         </a>
@@ -18,13 +18,12 @@
         <div class="p-4 mb-6 text-sm text-green-700 bg-green-100 rounded-lg font-bold shadow-sm">{{ session('success_cancel') }}</div>
     @endif
 
-    <!-- THE GIANT CARD: Nearest Appointment (Moved to the top) -->
+    <!-- THE GIANT CARD which is the Nearest Appointment -->
     <h3 class="text-xl font-bold text-blue mb-4">Next Appointment</h3>
     
     @if($nearestAppointment)
         <div class="bg-white rounded-2xl shadow-md border border-gray-200 p-6 md:p-8 flex flex-col md:flex-row items-center gap-6 md:gap-10 mb-10 transition hover:shadow-lg">
             
-            <!-- Pet Image -->
             <div class="w-32 h-32 md:w-40 md:h-40 rounded-full overflow-hidden border-4 border-gray-100 shadow-inner shrink-0">
                 @if($nearestAppointment->pet_image)
                     <img src="{{ asset('storage/' . $nearestAppointment->pet_image) }}" alt="Pet Photo" class="w-full h-full object-cover">
@@ -33,15 +32,13 @@
                 @endif
             </div>
 
-            <!-- Details -->
             <div class="flex-1 text-center md:text-left w-full">
                 <div class="flex flex-col md:flex-row md:justify-between md:items-start gap-4 mb-4">
                     <div>
                         <h4 class="text-2xl font-extrabold text-gray-800">{{ $nearestAppointment->pet_name }}</h4>
                         <p class="text-blue font-bold text-lg mt-1">{{ \Carbon\Carbon::parse($nearestAppointment->appointmentdate)->format('F d, Y') }} at {{ \Carbon\Carbon::parse($nearestAppointment->appointmenttime)->format('h:i A') }}</p>
                     </div>
-                    
-                    <span class="inline-block px-4 py-1.5 rounded-full text-sm font-bold {{ $nearestAppointment->status == 'Approved' ? 'bg-green-100 text-green-700' : 'bg-orange-100 text-orange-700' }}">
+                    <span class="inline-block px-4 py-1.5 rounded-full text-sm font-bold {{ $nearestAppointment->status == 'Approved' ? 'bg-green-100 text-green-700' : 'bg-yellow-100 text-yellow-700' }}">
                         {{ $nearestAppointment->status }}
                     </span>
                 </div>
@@ -50,11 +47,10 @@
                     <span class="font-bold">Service:</span> {{ $nearestAppointment->service_name }}
                 </div>
 
-                <!-- Cancel Button -->
                 <div class="flex justify-center md:justify-start">
                     <button wire:confirm="Are you sure you want to cancel this appointment? This action cannot be undone." 
                             wire:click="cancelAppointment({{ $nearestAppointment->appointmentID }})" 
-                            class="bg-red text-white font-bold py-2 px-6 rounded shadow-sm hover:opacity-90 transition flex items-center gap-2">
+                            class="bg-red text-white font-bold py-2 px-6 rounded shadow-sm hover:bg-red/90 transition flex items-center gap-2">
                         <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg>
                         Cancel Appointment
                     </button>
@@ -62,7 +58,6 @@
             </div>
         </div>
     @else
-        <!-- EMPTY STATE (No upcoming appointments) -->
         <div class="bg-white rounded-2xl shadow-sm border border-gray-200 p-12 flex flex-col items-center justify-center text-center mb-10">
             <div class="w-24 h-24 bg-gray-100 rounded-full flex items-center justify-center mb-4 text-gray-400">
                 <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect width="18" height="18" x="3" y="4" rx="2" ry="2"/><line x1="16" x2="16" y1="2" y2="6"/><line x1="8" x2="8" y1="2" y2="6"/><line x1="3" x2="21" y1="10" y2="10"/></svg>
@@ -72,21 +67,21 @@
         </div>
     @endif
 
-    <!-- REDESIGNED "AT A GLANCE" COUNTERS -->
+    <!-- REDESIGNED & CLICKABLE "AT A GLANCE" COUNTERS -->
     <h3 class="text-xl font-bold text-blue mb-4">Account Overview</h3>
     <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-10">
         
-        <!-- Active Pets -->
-        <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6 flex flex-col items-center justify-center text-center transition hover:shadow-md border-b-4 border-b-blue">
-            <div class="text-blue mb-3">
+        <!-- Active Pets (Redirects to Profile Page) -->
+        <a href="{{ route('user.profile', ['tab' => 'pets']) }}" class="bg-white rounded-xl shadow-sm border border-gray-200 p-6 flex flex-col items-center justify-center text-center transition hover:shadow-md hover:bg-blue-50 border-b-4 border-b-blue cursor-pointer group">
+            <div class="text-blue mb-3 group-hover:scale-110 transition-transform">
                 <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="4" r="2"/><circle cx="18" cy="8" r="2"/><circle cx="20" cy="16" r="2"/><path d="M9 10a5 5 0 0 1 5 5v3.5a3.5 3.5 0 0 1-6.84 1.045Q6.52 17.48 4.46 16.84A3.5 3.5 0 0 1 5.5 10Z"/></svg>
             </div>
             <p class="text-xs font-bold text-gray-500 uppercase tracking-wider mb-1">Active Pets</p>
             <h3 class="text-3xl font-extrabold text-gray-800">{{ $activePetsCount }}</h3>
-        </div>
+        </a>
 
-        <!-- Upcoming Visits -->
-        <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6 flex flex-col items-center justify-center text-center transition hover:shadow-md border-b-4 border-b-orange-400">
+        <!-- Upcoming Visits (Read-Only) -->
+        <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6 flex flex-col items-center justify-center text-center border-b-4 border-b-orange-400">
             <div class="text-orange-500 mb-3">
                 <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="18" height="18" x="3" y="4" rx="2" ry="2"/><line x1="16" x2="16" y1="2" y2="6"/><line x1="8" x2="8" y1="2" y2="6"/><line x1="3" x2="21" y1="10" y2="10"/></svg>
             </div>
@@ -94,48 +89,59 @@
             <h3 class="text-3xl font-extrabold text-gray-800">{{ $upcomingVisitsCount }}</h3>
         </div>
 
-        <!-- Completed Visits -->
-        <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6 flex flex-col items-center justify-center text-center transition hover:shadow-md border-b-4 border-b-green-500">
-            <div class="text-green-500 mb-3">
+        <!-- Completed Visits (Triggers Modal) -->
+        <button wire:click="openCompletedModal" class="bg-white rounded-xl shadow-sm border border-gray-200 p-6 flex flex-col items-center justify-center text-center transition hover:shadow-md hover:bg-green-50 border-b-4 border-b-green-500 cursor-pointer group w-full">
+            <div class="text-green-500 mb-3 group-hover:scale-110 transition-transform">
                 <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>
             </div>
             <p class="text-xs font-bold text-gray-500 uppercase tracking-wider mb-1">Completed</p>
             <h3 class="text-3xl font-extrabold text-gray-800">{{ $completedVisitsCount }}</h3>
-        </div>
+        </button>
 
-        <!-- Total History -->
-        <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6 flex flex-col items-center justify-center text-center transition hover:shadow-md border-b-4 border-b-gray-400">
-            <div class="text-gray-500 mb-3">
+        <!-- Total History (Triggers Modal) -->
+        <button wire:click="openHistoryModal" class="bg-white rounded-xl shadow-sm border border-gray-200 p-6 flex flex-col items-center justify-center text-center transition hover:shadow-md hover:bg-gray-50 border-b-4 border-b-gray-400 cursor-pointer group w-full">
+            <div class="text-gray-500 mb-3 group-hover:scale-110 transition-transform">
                 <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v18h18"/><path d="m19 9-5 5-4-4-3 3"/></svg>
             </div>
             <p class="text-xs font-bold text-gray-500 uppercase tracking-wider mb-1">Total History</p>
             <h3 class="text-3xl font-extrabold text-gray-800">{{ $totalAppointmentsCount }}</h3>
-        </div>
-
+        </button>
     </div>
 
     <!-- SECONDARY LIST: Other Upcoming Appointments -->
     @if($otherAppointments->count() > 0)
-        <h3 class="text-lg font-bold text-gray-700 mb-4 border-t border-gray-200 pt-8">Other Upcoming Visits</h3>
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-            @foreach($otherAppointments as $appt)
-                <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-5 flex flex-col transition hover:shadow-md">
-                    <div class="flex justify-between items-start mb-3">
-                        <h4 class="font-bold text-lg text-gray-800">{{ $appt->pet_name }}</h4>
-                        <span class="text-xs font-bold px-2 py-1 rounded {{ $appt->status == 'Approved' ? 'bg-green-100 text-green-700' : 'bg-orange-100 text-orange-700' }}">{{ $appt->status }}</span>
-                    </div>
-                    <p class="text-sm font-bold text-blue mb-1">{{ \Carbon\Carbon::parse($appt->appointmentdate)->format('M d, Y') }}</p>
-                    <p class="text-sm text-gray-500 mb-4">{{ \Carbon\Carbon::parse($appt->appointmenttime)->format('h:i A') }}</p>
-                    
-                    <div class="mt-auto pt-3 border-t border-gray-100">
-                        <button wire:confirm="Cancel this appointment?" 
-                                wire:click="cancelAppointment({{ $appt->appointmentID }})" 
-                                class="w-full bg-red text-white font-bold py-1.5 rounded text-sm hover:opacity-90 transition">
-                            Cancel
-                        </button>
-                    </div>
+        <!-- ... keep your existing secondary list block exactly the same ... -->
+    @endif
+
+    <!-- ============================================== -->
+    <!-- DYNAMIC HISTORY MODAL                          -->
+    <!-- ============================================== -->
+    @if($isModalOpen)
+        <div class="fixed inset-0 bg-gray-900/60 z-50 flex items-center justify-center p-4">
+            <div class="bg-white rounded-xl shadow-2xl w-full max-w-6xl p-6 md:p-8 max-h-[90vh] flex flex-col mt-10 md:mt-0">
+                
+                <!-- Modal Header -->
+                <div class="flex justify-between items-center mb-6 border-b border-gray-100 pb-4">
+                    <h3 class="text-2xl font-extrabold text-blue">{{ $modalTitle }}</h3>
+                    <button wire:click="closeModal" class="text-gray-400 hover:text-red transition">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>
+                    </button>
                 </div>
-            @endforeach
+
+                <!-- Modal Body: Reusing your exact shared component -->
+                <div class="overflow-y-auto flex-1 pr-2">
+                    <!-- Passing $isUserView = true forces the shared card to hide Assistant Action Buttons -->
+                    @include('livewire.shared.appointment-card', [
+                        'appointments' => $modalAppointments,
+                        'isUserView' => true 
+                    ])
+                </div>
+
+                <!-- Modal Footer -->
+                <div class="mt-6 pt-4 border-t border-gray-100 flex justify-end shrink-0">
+                    <button wire:click="closeModal" class="px-6 py-2 rounded-lg font-bold text-gray-600 bg-gray-100 hover:bg-gray-200 transition">Close Panel</button>
+                </div>
+            </div>
         </div>
     @endif
 

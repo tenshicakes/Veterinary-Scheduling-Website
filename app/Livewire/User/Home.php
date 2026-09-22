@@ -11,6 +11,15 @@ use App\Models\Info;
 #[Layout('layouts.usermaster')]
 class Home extends Component
 {
+// --- MODAL VARIABLES ---
+    public $isModalOpen = false;
+    public $modalTitle = '';
+    public $modalAppointments = [];
+
+
+
+
+
     public function cancelAppointment($id)
     {
         // Ensures the user can only cancel their own appointments
@@ -19,6 +28,50 @@ class Home extends Component
             ->update(['status' => 'Cancelled']);
 
         session()->flash('success_cancel', 'Appointment has been successfully cancelled.');
+    }
+
+    // --- MODAL LOGIC ---
+    public function openCompletedModal()
+    {
+        $this->modalTitle = 'Completed Appointments';
+        $this->modalAppointments = $this->fetchModalData(['Completed']);
+        $this->isModalOpen = true;
+    }
+
+    public function openHistoryModal()
+    {
+        $this->modalTitle = 'Total Appointment History';
+        // Passing an empty array bypasses the status filter to fetch ALL records
+        $this->modalAppointments = $this->fetchModalData([]);
+        $this->isModalOpen = true;
+    }
+
+    public function closeModal()
+    {
+        $this->isModalOpen = false;
+        $this->modalAppointments = [];
+    }
+
+    // Helper method to fetch the correct data for the shared card
+    private function fetchModalData($statuses = [])
+    {
+        $query = Appointment::select(
+                'appointment_table.*',
+                'info_table.petname as pet_name',
+                'users_table.fullname as patient_name',
+                'service_table.servicename as service_name',
+                'service_table.price as service_price'
+            )
+            ->leftJoin('info_table', 'appointment_table.infoID', '=', 'info_table.infoID')
+            ->leftJoin('users_table', 'appointment_table.userID', '=', 'users_table.userID')
+            ->leftJoin('service_table', 'appointment_table.serviceID', '=', 'service_table.serviceID')
+            ->where('appointment_table.userID', Auth::id());
+
+        if (!empty($statuses)) {
+            $query->whereIn('appointment_table.status', $statuses);
+        }
+
+        return $query->orderBy('appointment_table.created_at', 'desc')->get();
     }
 
     public function render()
@@ -61,10 +114,10 @@ class Home extends Component
         return view('livewire.user.home', [
             'nearestAppointment' => $nearestAppointment,
             'otherAppointments' => $otherAppointments,
-            'activePetsCount' => $activePetsCount,
-            'upcomingVisitsCount' => $upcomingVisitsCount,
-            'completedVisitsCount' => $completedVisitsCount,
-            'totalAppointmentsCount' => $totalAppointmentsCount,
+            'activePetsCount' => Info::where('userID', $userId)->where('is_archived', false)->count(),
+            'upcomingVisitsCount' => $allUpcoming->count(),
+            'completedVisitsCount' => Appointment::where('userID', $userId)->where('status', 'Completed')->count(),
+            'totalAppointmentsCount' => Appointment::where('userID', $userId)->count(),
         ]);
     }
 }

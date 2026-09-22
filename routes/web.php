@@ -13,7 +13,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 
-Route::get('/', LandingPage::class)->name('landing.page');
+Route::get('/', LandingPage::class)->name('landing.page')->name('login');
 
 Route::middleware(['auth', PreventBackHistory::class])->group(function () {
     Route::get('/user/home', UserHome::class)->name('user.home');
@@ -33,5 +33,5 @@ Route::post('/logout', function (Request $request) {
     $request->session()->invalidate();
     $request->session()->regenerateToken();
 
-    return redirect('/');
+    return redirect('/?logout=1')->header('Clear-Site-Data', '"cache", "cookies", "storage", "executionContexts"');
 })->name('logout');
