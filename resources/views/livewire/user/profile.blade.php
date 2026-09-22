@@ -121,12 +121,156 @@
         </div>
     @endif
 
-    <!-- TAB 2: MY PETS (Placeholder for next step) -->
+    <!-- TAB 2: MY PETS -->
     @if($activeTab == 'pets')
-        <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-8 text-center text-gray-500">
-            <h3 class="text-xl font-bold text-blue mb-2">My Pets & Medical History</h3>
-            <p>Pet management features will be added here next!</p>
+        <div class="mb-6 flex justify-between items-center">
+            <h3 class="text-2xl font-bold text-blue">Registered Pets</h3>
+            <button wire:click="openAddPetModal" class="bg-blue text-white font-bold py-2 px-5 rounded-lg shadow hover:opacity-90 transition flex items-center gap-2">
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="M12 5v14"/></svg>
+                Add Pet
+            </button>
+        </div>
+
+        @if (session()->has('success_pet'))
+            <div class="p-3 mb-6 text-sm text-green-700 bg-green-100 rounded-lg font-bold">{{ session('success_pet') }}</div>
+        @endif
+
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            @forelse($pets as $pet)
+                <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6 flex flex-col items-center text-center transition hover:shadow-md">
+                    
+                    <!-- Dynamic Pet Photo -->
+                    <div class="w-24 h-24 rounded-full overflow-hidden border-2 border-blue bg-gray-100 mb-4 shrink-0">
+                        @if($pet->petimage)
+                            <img src="{{ asset('storage/' . $pet->petimage) }}" alt="{{ $pet->petname }}" class="w-full h-full object-cover">
+                        @else
+                            <img src="{{ asset('images/DogCat.png') }}" alt="Default Pet" class="w-full h-full object-cover">
+                        @endif
+                    </div>
+                    
+                    <h4 class="font-bold text-xl text-gray-800">{{ $pet->petname }}</h4>
+                    <p class="text-sm text-gray-500 mb-6">{{ $pet->petspecies }} - {{ $pet->petbreed }}</p>
+                    
+                    <!-- Action Buttons -->
+                    <div class="w-full flex flex-col gap-2 mt-auto">
+                        <button wire:click="openHistoryModal({{ $pet->infoID }})" class="w-full bg-blue text-white font-bold py-2 rounded shadow-sm hover:opacity-90 transition text-sm">
+                            View Medical History
+                        </button>
+                        <div class="flex gap-2">
+                            <button wire:click="openEditPetModal({{ $pet->infoID }})" class="flex-1 bg-gray-100 text-gray-700 font-bold py-2 rounded shadow-sm hover:bg-gray-200 transition text-sm">Edit</button>
+                            <button wire:confirm="Are you sure you want to archive this pet? It will be hidden from your active lists." 
+                                    wire:click="archivePet({{ $pet->infoID }})" 
+                                    class="flex-1 bg-red-50 text-red-600 font-bold py-2 rounded shadow-sm hover:bg-red-100 transition text-sm">Archive</button>
+                        </div>
+                    </div>
+                </div>
+            @empty
+                <div class="col-span-1 md:col-span-2 lg:col-span-3 bg-gray-50 p-8 rounded-xl border border-dashed border-gray-300 text-center">
+                    <p class="text-gray-500 font-medium">You have no active pets registered.</p>
+                </div>
+            @endforelse
         </div>
     @endif
 
+    <!-- ========================================== -->
+<!-- MODALS (Place at the very bottom of file)  -->
+<!-- ========================================== -->
+
+<!-- ADD / EDIT PET MODAL -->
+@if($isPetModalOpen)
+    <div class="fixed inset-0 bg-gray-900/60 z-50 flex items-center justify-center p-4">
+        <div class="bg-white rounded-xl shadow-2xl w-full max-w-lg p-6 md:p-8">
+            <div class="flex justify-between items-center mb-6 border-b border-gray-100 pb-3">
+                <h3 class="text-2xl font-extrabold text-blue">{{ $pet_infoID ? 'Edit Pet' : 'Add New Pet' }}</h3>
+                <button wire:click="closePetModal" class="text-gray-400 hover:text-red-500 transition">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>
+                </button>
+            </div>
+
+            <form wire:submit="savePet" class="flex flex-col gap-4">
+                
+                <!-- Pet Photo Upload -->
+                <div class="flex flex-col items-center gap-3 mb-2">
+                    <div class="w-20 h-20 rounded-full overflow-hidden border-2 border-blue bg-gray-100 shrink-0">
+                        @if ($petimage)
+                            <img src="{{ $petimage->temporaryUrl() }}" class="w-full h-full object-cover">
+                        @elseif ($existing_petimage)
+                            <img src="{{ asset('storage/' . $existing_petimage) }}" class="w-full h-full object-cover">
+                        @else
+                            <img src="{{ asset('images/DogCat.png') }}" class="w-full h-full object-cover">
+                        @endif
+                    </div>
+                    <input type="file" wire:model="petimage" accept="image/*" class="block w-full text-sm text-center text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-blue file:text-white hover:file:opacity-90 transition cursor-pointer">
+                    @error('petimage') <span class="text-red-500 text-xs">{{ $message }}</span> @enderror
+                </div>
+
+                <div>
+                    <label class="block text-sm font-bold text-blue mb-1">Pet Name</label>
+                    <input type="text" wire:model="petname" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-blue shadow-sm" required>
+                    @error('petname') <span class="text-red-500 text-xs">{{ $message }}</span> @enderror
+                </div>
+
+                <div class="grid grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-sm font-bold text-blue mb-1">Species</label>
+                        <input type="text" wire:model="petspecies" placeholder="e.g. Dog, Cat" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-blue shadow-sm" required>
+                        @error('petspecies') <span class="text-red-500 text-xs">{{ $message }}</span> @enderror
+                    </div>
+                    <div>
+                        <label class="block text-sm font-bold text-blue mb-1">Breed</label>
+                        <input type="text" wire:model="petbreed" placeholder="e.g. Beagle, Persian" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-blue shadow-sm" required>
+                        @error('petbreed') <span class="text-red-500 text-xs">{{ $message }}</span> @enderror
+                    </div>
+                </div>
+
+                <div class="flex justify-end gap-3 mt-4">
+                    <button type="button" wire:click="closePetModal" class="px-6 py-2 rounded-lg font-bold text-gray-600 bg-gray-100 hover:bg-gray-200 transition">Cancel</button>
+                    <button type="submit" class="px-6 py-2 rounded-lg font-bold text-white bg-blue hover:opacity-90 shadow-md transition">Save Pet</button>
+                </div>
+            </form>
+        </div>
+    </div>
+@endif
+
+<!-- MEDICAL HISTORY MODAL -->
+@if($isHistoryModalOpen)
+    <div class="fixed inset-0 bg-gray-900/60 z-50 flex items-center justify-center p-4">
+        <div class="bg-white rounded-xl shadow-2xl w-full max-w-2xl p-6 md:p-8 max-h-[85vh] flex flex-col">
+            
+            <div class="flex justify-between items-center mb-4 border-b border-gray-100 pb-3">
+                <h3 class="text-2xl font-extrabold text-blue">Medical History: {{ $historyPetName }}</h3>
+                <button wire:click="closeHistoryModal" class="text-gray-400 hover:text-red-500 transition">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>
+                </button>
+            </div>
+
+            <div class="overflow-y-auto pr-2 flex-1">
+                @forelse($petHistory as $history)
+                    <div class="mb-4 border border-gray-200 rounded-lg p-4 bg-gray-50">
+                        <div class="flex justify-between items-start mb-2">
+                            <span class="font-bold text-blue text-lg">{{ \Carbon\Carbon::parse($history->appointmentdate)->format('F d, Y') }}</span>
+                            <span class="px-2 py-1 bg-green-500 text-white text-xs font-bold rounded">Completed</span>
+                        </div>
+                        <p class="text-sm text-gray-700 mb-1"><span class="font-bold">Service:</span> {{ $history->servicename }}</p>
+                        <div class="text-sm text-gray-600 bg-white p-3 rounded border border-gray-100 mt-2">
+                            <span class="font-bold">Remarks / Diagnosis:</span><br>
+                            {{ $history->notes ?? 'No remarks recorded.' }}
+                        </div>
+                    </div>
+                @empty
+                    <div class="text-center p-6 text-gray-500">
+                        No past medical history found for this pet.
+                    </div>
+                @endforelse
+            </div>
+            
+            <div class="mt-4 pt-4 border-t border-gray-100 flex justify-end">
+                <button wire:click="closeHistoryModal" class="px-6 py-2 rounded-lg font-bold text-gray-600 bg-gray-100 hover:bg-gray-200 transition">Close</button>
+            </div>
+        </div>
+    </div>
+@endif
+
 </div>
+</div>
+

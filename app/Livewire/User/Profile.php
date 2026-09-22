@@ -3,6 +3,8 @@
 namespace App\Livewire\User;
 
 use Livewire\Component;
+use App\Models\Info;
+use App\Models\Appointment;
 use Livewire\WithFileUploads;
 use Livewire\Attributes\Layout;
 use Illuminate\Support\Facades\Auth;
@@ -29,6 +31,22 @@ class Profile extends Component
     public $current_password;
     public $new_password;
     public $new_password_confirmation; // Must match 'new_password' for Laravel validation
+
+    // --- TAB 2: MY PETS VARIABLES ---
+    public $isPetModalOpen = false;
+    public $isHistoryModalOpen = false;
+
+    // Pet Form Variables
+    public $pet_infoID = null;
+    public $petname = '';
+    public $petspecies = '';
+    public $petbreed = '';
+    public $petimage; // For new uploads
+    public $existing_petimage; // To display the current photo during edits
+
+    // Medical History Variables
+    public $petHistory = [];
+    public $historyPetName = '';
 
     public function mount()
     {
@@ -92,8 +110,113 @@ class Profile extends Component
         session()->flash('success_password', 'Password updated successfully!');
     }
 
+    // --- TAB 2: MY PETS LOGIC ---
+
+    public function openAddPetModal()
+    {
+        $this->reset(['pet_infoID', 'petname', 'petspecies', 'petbreed', 'petimage', 'existing_petimage']);
+        $this->resetErrorBag();
+        $this->isPetModalOpen = true;
+    }
+
+    public function openEditPetModal($id)
+    {
+        $this->resetErrorBag();
+        $pet = \App\Models\Info::where('infoID', $id)->where('userID', Auth::id())->firstOrFail();
+        
+        if ($pet) {
+            $this->pet_infoID = $pet->infoID;
+            $this->petname = $pet->petname;
+            $this->petspecies = $pet->petspecies;
+            $this->petbreed = $pet->petbreed;
+            $this->existing_petimage = $pet->petimage;
+            $this->petimage = null;
+            $this->isPetModalOpen = true;
+        }
+    }
+
+    public function closePetModal()
+    {
+        $this->isPetModalOpen = false;
+    }
+
+    public function savePet()
+    {
+        $this->validate([
+            'petname' => 'required|string|max:255',
+            'petspecies' => 'required|string|max:255',
+            'petbreed' => 'nullable|string|max:255',
+            'petimage' => 'nullable|image|max:2048'
+        ]);
+
+        // Find existing pet or create a new one
+        $pet = $this->pet_infoID ? \App\Models\Info::find($this->pet_infoID) : new \App\Models\Info();
+        
+        // Handle Photo Upload seamlessly using the storage link
+        if ($this->petimage) {
+            $path = $this->petimage->store('pet_photos', 'public');
+            $pet->petimage = $path;
+        }
+
+        $pet->userID = Auth::id();
+        $pet->petname = $this->petname;
+        $pet->petspecies = $this->petspecies;
+        $pet->petbreed = $this->petbreed;
+        
+        if (!$this->pet_infoID) {
+            $pet->is_archived = false; // Ensure new pets are active by default
+        }
+        
+        $pet->save();
+
+        $this->isPetModalOpen = false;
+        session()->flash('success_pet', 'Pet information saved successfully!');
+    }
+
+    public function archivePet($id)
+    {
+        \App\Models\Info::where('infoID', $id)->where('userID', Auth::id())->update(['is_archived' => true]);
+        session()->flash('success_pet', 'Pet archived successfully.');
+    }
+
+    // --- MEDICAL HISTORY LOGIC ---
+
+    public function openHistoryModal($id)
+    {
+        $pet = \App\Models\Info::where('infoID', $id)->where('userID', Auth::id())->first();
+        
+        if ($pet) {
+            $this->historyPetName = $pet->petname;
+            
+            // Strictly fetch only 'Completed' appointments as per scope requirements
+            $this->petHistory = \App\Models\Appointment::select(
+                    'appointment_table.*', 
+                    'service_table.servicename'
+                )
+                ->leftJoin('service_table', 'appointment_table.serviceID', '=', 'service_table.serviceID')
+                ->where('appointment_table.infoID', $id)
+                ->where('appointment_table.status', 'Completed')
+                ->orderBy('appointment_table.appointmentdate', 'desc')
+                ->get();
+            
+            $this->isHistoryModalOpen = true;
+        }
+    }
+
+    public function closeHistoryModal()
+    {
+        $this->isHistoryModalOpen = false;
+    }
+
     public function render()
     {
-        return view('livewire.user.profile');
+        // Fetch only active pets for the grid
+        $activePets = \App\Models\Info::where('userID', Auth::id())
+                                      ->where('is_archived', false)
+                                      ->get();
+
+        return view('livewire.user.profile', [
+            'pets' => $activePets
+        ]);
     }
 }
