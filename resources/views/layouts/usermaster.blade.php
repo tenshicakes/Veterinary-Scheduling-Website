@@ -59,7 +59,7 @@
                 Book Appointment
             </a>
 
-            <a href="#" class="flex items-center gap-3 px-4 py-3 text-sm font-bold rounded-lg text-primary hover:bg-blue hover:text-white transition">
+            <a href="{{ route('user.profile') }}" class="flex items-center gap-3 px-4 py-3 text-sm font-bold rounded-lg text-primary hover:bg-blue hover:text-white transition">
                 <!-- Lucide User Icon -->
                 <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                     <path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/>

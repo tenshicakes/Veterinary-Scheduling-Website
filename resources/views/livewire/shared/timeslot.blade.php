@@ -6,7 +6,7 @@
                             <p class="text-gray-400 text-sm text-center">Please select a date from the calendar to view available slots.</p>
                         </div>
                     @else
-                        <div class="grid grid-cols-2 gap-3">
+                        <div class="grid grid-cols-2 gap-3" wire:poll.3s="getAvailableTimeSlots">
                             @forelse($timeSlots as $slot)
                                 <div wire:click="$set('selectedTime', '{{ $slot }}')" 
                                      class="cursor-pointer border rounded-lg p-3 text-center font-bold text-sm transition hover:shadow-md 

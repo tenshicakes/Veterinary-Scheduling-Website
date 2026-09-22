@@ -23,6 +23,8 @@ class LandingPage extends Component
     public $phone_number;
 
     public $address;
+    
+    public $profile_image;
 
     // The toggle variable for the eye icon
     public $showPassword = false;
@@ -74,6 +76,7 @@ class LandingPage extends Component
             'password' => 'required|min:8',
             'phone_number' => 'nullable|string|max:20|regex:/^[0-9+\-\s()]+$/',
             'address' => 'nullable|string|max:255',
+            'profile_image' => 'nullable|string|max:255',
         ]);
 
         $user = User::create([
@@ -82,6 +85,7 @@ class LandingPage extends Component
             'password' => Hash::make($this->password),
             'phone_number' => $this->phone_number ?? '',
             'address' => $this->address ?? '',
+            'profile_image' => $this->profile_image ?? '',
             'role' => 'User',
         ]);
 

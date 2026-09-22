@@ -8,6 +8,7 @@ use App\Livewire\Assistant\Home as AssistantHome;
 use App\Livewire\Superadmin\Home as SuperadminHome;
 use App\Livewire\User\Appointment as UserAppointment;
 use App\Livewire\User\Home as UserHome;
+use App\Livewire\User\Profile as UserProfile;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
@@ -17,6 +18,7 @@ Route::get('/', LandingPage::class)->name('landing.page');
 Route::middleware(['auth', PreventBackHistory::class])->group(function () {
     Route::get('/user/home', UserHome::class)->name('user.home');
     Route::get('/user/appointment', UserAppointment::class)->name('user.appointment');
+    Route::get('/user/profile', UserProfile::class)->name('user.profile');
 
     Route::get('/admin/home', AdminHome::class)->name('admin.home');
 
