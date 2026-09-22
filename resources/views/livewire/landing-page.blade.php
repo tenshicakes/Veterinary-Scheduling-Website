@@ -1,33 +1,33 @@
 <div class="flex flex-col-reverse md:flex-row min-h-screen">
     
-<!-- Left Side: Branding -->
+<!-- Logo text and the image -->
 <div class="w-full md:w-1/2 bg-primary flex flex-col pt-8 md:pt-12 relative overflow-hidden">
     
     <!-- Text Content -->
     <div class="text-left px-8 md:px-12 z-10 flex flex-col items-start">
         
-        <!-- Logo: (h-24 on mobile, h-32 on desktop) -->
+        <!-- the logo itself (h-24 on mobile, h-32 on desktop) -->
         <img src="{{ asset('images/clinic-logo.png') }}" alt="Logo" class="h-24 md:h-32 w-auto object-contain mb-4">
         
-        <!-- Text: left alignment -->
+        <!-- some texts -->
         <h1 class=" text-3xl md:text-5xl font-bold text-surface opacity-100 leading-tight text-blue">Trusted Care</h1>
         <h1 class="text-3xl md:text-5xl font-bold text-surface opacity-100 leading-tight text-blue">for Your <span class="text-secondary text-red"> Beloved Pets</span></h1>
         <p class=" text-surface text-lg md:text-lg opacity-80 leading-tight mt-5">We provide quality veterinary care, from routine checkups to specialized treatment, because they are family.</p>
     </div>
 
-    <!-- Image anchored to the bottom  -->
+    <!-- the image at the bottom  -->
     <div class="mt-auto w-full flex items-end justify-center">
         <img src="{{ asset('images/DogCat.png') }}" alt="DogCat" class="w-full max-h-[40vh] md:max-h-[50vh] object-contain object-bottom">
     </div>
 </div>
 
-    <!-- Right Side: Forms -->
+    <!-- Login and Sign up Forms -->
 <div class="w-full md:w-1/2 bg-background flex items-center justify-center p-6 md:p-12">
 
-    <!-- Floating Material Card -->
+    <!-- a card for the login and sign up form -->
     <div class="w-full max-w-md bg-surface rounded-2xl shadow-[0_8px_30px_rgb(0,0,0,0.12)] p-8 md:p-10">
 
-        <!-- GLOBAL ERROR BOX -->
+        <!-- Error message -->
         @if($errors->any())
             <div class="mb-4 p-3 bg-red-100 border border-red-400 text-red-700 rounded-lg text-sm text-center font-medium shadow-sm">
                 @foreach ($errors->all() as $error)
@@ -38,7 +38,7 @@
 
         @if($isLogin)
             <!-- LOGIN FORM -->
-            <!-- Header with Paw Icon -->
+            <!-- Header with dog paw Icon -->
             <div class="mb-8">
                 <div class="flex items-center gap-3">
                     <!-- Red Paw SVG -->
@@ -50,7 +50,7 @@
             </div>
 
             <form wire:submit="authenticate" class="flex flex-col gap-5">
-                <!-- Email Field -->
+                <!-- Email  -->
                 <div>
             
                     <label class="block text-sm font-bold text-blue mb-2">Email Address</label>
@@ -64,7 +64,7 @@
                     @error('email') <span class="text-red-500 text-xs mt-1 block">{{ $message }}</span> @enderror
                 </div>
                 
-                <!-- Password Field -->
+                <!-- Password  -->
                 <div>
                     <label class="block text-sm font-bold text-blue mb-2">Password</label>
                     <div class="relative">
@@ -73,10 +73,10 @@
                             <svg class="w-5 h-5 text-blue" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path></svg>
                         </div>
 
-                        <!-- DYNAMIC TYPE: Swaps between 'text' and 'password' -->
+                        <!-- View or not view the password ' -->
                         <input type="{{ $showPassword ? 'text' : 'password' }}" wire:model="password" class="w-full pl-12 pr-12 py-3 border border-gray-200 rounded-lg focus:outline-none focus:border-primary shadow-[0_4px_10px_-2px_rgba(0,0,0,0.08)]" placeholder="Enter your password" required>
                     
-                        <!-- EYE ICON CLICK ACTION -->
+                        <!-- eye icon to view the password typed -->
                         <button type="button" wire:click="togglePassword" class="absolute inset-y-0 right-0 pr-4 flex items-center text-primary hover:text-gray-700">
                             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.88 9.88l-3.29-3.29m7.532 7.532l3.29 3.29M3 3l3.59 3.59m0 0A9.953 9.953 0 0112 5c4.478 0 8.268 2.943 9.543 7a10.025 10.025 0 01-4.132 5.411m0 0l-3.29-3.29"></path></svg>
                         </button>
@@ -85,14 +85,14 @@
 
                 
 
-                <!-- Red Login Button -->
+                <!-- Login Button -->
                 <button type="submit" class="w-full bg-red text-white font-bold py-3 rounded-lg mt-2 hover:bg-red-700 transition flex justify-center items-center gap-2 shadow-md">
                     Log In
                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
                 </button>
             </form>
             
-            <!-- Footer -->
+            <!-- dont have an account text -->
             <p class="mt-8 text-sm text-center text-gray-500 font-medium">
                 Don't have an account? <button wire:click="toggleForm" class="text-red-600 font-bold hover:underline ml-1">Sign Up</button>
             </p>
@@ -121,7 +121,7 @@
                     @error('email') <span class="text-red-500 text-xs mt-1 block">{{ $message }}</span> @enderror
                 </div>
 
-                <!-- ADDED: Phone Number -->
+                <!-- Phone Number -->
                 <div>
                     <label class="block text-sm font-bold text-blue mb-2">Phone Number</label>
                     <div class="relative">
@@ -130,7 +130,7 @@
                     @error('phone_number') <span class="text-red-500 text-xs mt-1 block">{{ $message }}</span> @enderror
                 </div>
 
-                <!-- ADDED: Address (Optional) -->
+                <!-- Address (it is optional ) -->
                 <div>
                     <label class="block text-sm font-bold text-blue mb-2">Address <span class="text-gray-400 font-normal">(Optional)</span></label>
                     <div class="relative">
@@ -142,10 +142,10 @@
                 <div>
                     <label class="block text-sm font-bold text-primary mb-2">Password</label>
                     <div class="relative">
-                        <!-- DYNAMIC TYPE: Swaps between 'text' and 'password' -->
+                        <!-- View or not view the password -->
                         <input type="{{ $showPassword ? 'text' : 'password' }}" wire:model="password" class="w-full pl-4 pr-12 py-3 border border-gray-200 rounded-lg focus:outline-none focus:border-primary shadow-[0_4px_10px_-2px_rgba(0,0,0,0.08)]" placeholder="Create a strong password" required>
                     
-                        <!-- EYE ICON CLICK ACTION -->
+                        <!-- the eye icon for sign up -->
                         <button type="button" wire:click="togglePassword" class="absolute inset-y-0 right-0 pr-4 flex items-center text-primary hover:text-gray-700">
                             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.88 9.88l-3.29-3.29m7.532 7.532l3.29 3.29M3 3l3.59 3.59m0 0A9.953 9.953 0 0112 5c4.478 0 8.268 2.943 9.543 7a10.025 10.025 0 01-4.132 5.411m0 0l-3.29-3.29"></path></svg>
                         </button>

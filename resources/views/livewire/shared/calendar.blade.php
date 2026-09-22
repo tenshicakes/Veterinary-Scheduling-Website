@@ -1,6 +1,6 @@
 <div class="w-full bg-white border border-gray-200 rounded-xl p-6 shadow-sm">
     
-    <!-- HEADER: Month Navigation -->
+    <!-- Month  -->
     <div class="flex items-center justify-between mb-4">
         <!-- Back Button (Disabled if viewing the current month) -->
         <button wire:click="previousMonth" 
@@ -17,14 +17,14 @@
         </button>
     </div>
     
-    <!-- Days of the Week Header -->
+    <!-- Days of the Week  -->
     <div class="grid grid-cols-7 gap-1 text-center text-xs font-bold text-gray-400 mb-2">
         <div>Sun</div><div>Mon</div><div>Tue</div><div>Wed</div><div>Thu</div><div>Fri</div><div>Sat</div>
     </div>
 
-    <!-- Calendar Grid -->
+    <!-- Calendar box -->
     <div class="grid grid-cols-7 gap-1 text-center">
-        <!-- Empty slots to align the first day correctly -->
+
         @for ($i = 0; $i < $firstDayOfWeek; $i++)
             <div class="p-2"></div>
         @endfor
@@ -39,12 +39,12 @@
             @endphp
 
             @if($isUnavailable)
-                <!-- Grayed out unavailable/past day -->
+                <!-- Unavailable/past day -->
                 <div class="p-2 text-sm font-medium text-gray-300 bg-gray-50 rounded cursor-not-allowed">
                     {{ $day }}
                 </div>
             @else
-                <!-- Clickable available day -->
+                <!-- Available day -->
                 <div wire:click="selectDate('{{ $dateString }}')" 
                      class="p-2 text-sm font-bold rounded cursor-pointer transition hover:bg-blue
                      {{ $selectedDate === $dateString ? 'bg-blue text-white shadow-md' : 'text-gray-700 bg-white border border-gray-100' }}">

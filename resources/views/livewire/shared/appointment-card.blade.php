@@ -3,12 +3,12 @@
             <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-5 flex flex-col justify-between transition hover:shadow-md">
                 
                 <div>
-                    <!-- Small timestamp so the Assistant knows exactly when the request was made -->
+                    <!--    timestamp  -->
                     <div class="text-[10px] uppercase tracking-wide text-gray-500 font-bold mb-2">
                         Requested on {{ \Carbon\Carbon::parse($appt->created_at)->format('M d, Y - h:i A') }}
                     </div>
 
-                    <!-- Card Header: Names and Status Badge -->
+                    <!-- Names and Status Badge -->
                     <div class="flex justify-between items-start mb-4 border-b border-gray-100 pb-3">
                         <div>
                             <h4 class="font-bold text-gray-800 text-lg">{{ $appt->patient_name ?? 'Unknown Owner' }}</h4>
@@ -42,7 +42,7 @@
                         </div>
                     </div>
 
-                    <!-- Payment / Extra Notes -->
+                    <!-- Payment and Extra Notes -->
                     @if($appt->notes)
                         <div class="bg-gray-50 rounded border border-gray-200 p-3 mb-4 text-xs text-gray-700 wrap-break-word max-h-24 overflow-y-auto">
                             <strong>Notes / Payment:</strong><br>
@@ -69,7 +69,7 @@
                                 class="flex-1 min-w-20 bg-red-500 text-white font-bold py-1.5 px-2 rounded shadow-sm hover:bg-red-600 transition text-xs">Reject</button>
                     
                     @elseif($appt->status == 'Approved')
-                        <!-- confirm to safely mark as completed -->
+                        <!-- confirm to mark as completed -->
                         <button wire:confirm="Mark this appointment as Completed?" 
                                 wire:click="updateStatus({{ $appt->appointmentID }}, 'Completed')" 
                                 class="flex-1 min-w-18.75 bg-gray-800 text-white font-bold py-1.5 px-2 rounded shadow-sm hover:bg-gray-900 transition text-xs">Complete</button>
