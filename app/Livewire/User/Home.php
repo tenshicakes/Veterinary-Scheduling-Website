@@ -7,6 +7,7 @@ use Livewire\Attributes\Layout;
 use Illuminate\Support\Facades\Auth;
 use App\Models\Appointment;
 use App\Models\Info;
+use Carbon\Carbon;
 
 #[Layout('layouts.usermaster')]
 class Home extends Component
@@ -16,6 +17,12 @@ class Home extends Component
     public $modalTitle = '';
     public $modalAppointments = [];
 
+    // --- RESCHEDULE MODAL VARIABLES ---
+    public $isRescheduling = false;
+    public $rescheduleApptId = null;
+    public $monthOffset = 0;
+    public $selectedDate = null;
+    public $selectedTime = null;
 
 
 
@@ -31,6 +38,14 @@ class Home extends Component
     }
 
     // --- MODAL LOGIC ---
+    public function openUpcomingModal()
+    {
+        $this->modalTitle = 'Approved Appointments';
+        // Fetches ONLY approved appointments to display in the modal
+        $this->modalAppointments = $this->fetchModalData(['Approved']);
+        $this->isModalOpen = true;
+    }
+
     public function openCompletedModal()
     {
         $this->modalTitle = 'Completed Appointments';
@@ -74,11 +89,112 @@ class Home extends Component
         return $query->orderBy('appointment_table.created_at', 'desc')->get();
     }
 
+    // --- RESCHEDULE LOGIC & CALENDAR METHODS ---
+    public function openRescheduleModal($id)
+    {
+        $this->rescheduleApptId = $id;
+        $this->isRescheduling = true;
+        $this->monthOffset = 0;
+        $this->selectedDate = null;
+        $this->selectedTime = null;
+        $this->resetErrorBag();
+    }
+
+    public function closeRescheduleModal()
+    {
+        $this->isRescheduling = false;
+        $this->rescheduleApptId = null;
+    }
+
+    public function confirmReschedule()
+    {
+        if (!$this->selectedDate || !$this->selectedTime) {
+            $this->addError('reschedule', 'Please select both a new date and time.');
+            return;
+        }
+
+        Appointment::where('appointmentID', $this->rescheduleApptId)
+            ->where('userID', Auth::id())
+            ->update([
+                'appointmentdate' => $this->selectedDate,
+                'appointmenttime' => Carbon::parse($this->selectedTime)->format('H:i:s'),
+                'status' => 'Pending' // Reverts to Pending so staff can verify the new slot
+            ]);
+
+        $this->closeRescheduleModal();
+        session()->flash('success_cancel', 'Appointment successfully rescheduled and is now pending approval.');
+    }
+
+    public function nextMonth()
+    {
+        $this->monthOffset++;
+        $this->selectedDate = null;
+        $this->selectedTime = null;
+    }
+
+    public function previousMonth()
+    {
+        if ($this->monthOffset > 0) {
+            $this->monthOffset--;
+            $this->selectedDate = null;
+            $this->selectedTime = null;
+        }
+    }
+
+    public function selectDate($date)
+    {
+        $this->selectedDate = $date;
+        $this->selectedTime = null;
+        $this->resetErrorBag('reschedule');
+    }
+
+    public function getUnavailableDates()
+    {
+        return Appointment::select('appointmentdate')
+            ->whereIn('status', ['Pending', 'Approved'])
+            ->groupBy('appointmentdate')
+            ->havingRaw('COUNT(*) >= 9')
+            ->pluck('appointmentdate')
+            ->toArray();
+    }
+
+    public function getAvailableTimeSlots()
+    {
+        if (!$this->selectedDate) return [];
+
+        $allSlots = ['09:00 AM', '10:00 AM', '11:00 AM', '12:00 PM', '01:00 PM', '02:00 PM', '03:00 PM', '04:00 PM', '05:00 PM'];
+        
+        $bookedRecords = Appointment::where('appointmentdate', $this->selectedDate)
+            ->whereIn('status', ['Pending', 'Approved'])
+            ->pluck('appointmenttime')
+            ->toArray();
+
+        $bookedSlots = array_map(function($time) {
+            return Carbon::parse($time)->format('h:i A');
+        }, $bookedRecords);
+
+        $availableSlots = [];
+        $now = Carbon::now();
+        $isToday = $this->selectedDate === $now->format('Y-m-d');
+
+        foreach ($allSlots as $slot) {
+            if (in_array($slot, $bookedSlots)) continue;
+            
+            if ($isToday) {
+                $slotExpirationTime = Carbon::parse($this->selectedDate . ' ' . $slot)->addMinutes(30);
+                if ($now->isAfter($slotExpirationTime)) continue;
+            }
+            $availableSlots[] = $slot;
+        }
+
+        return $availableSlots;
+    }
+
     public function render()
     {
         $userId = Auth::id();
 
-        // 1. Fetch all upcoming appointments (Sorted by nearest date/time first)
+        // Fetch all upcoming appointments (Sorted by nearest date/time first)
         $allUpcoming = Appointment::select(
                 'appointment_table.*',
                 'info_table.petname as pet_name',
@@ -97,7 +213,10 @@ class Home extends Component
         $nearestAppointment = $allUpcoming->first(); 
         $otherAppointments = $allUpcoming->skip(1);  
 
-        // 2. Calculate the Redesigned Counters
+        // Calendar variables
+        $today = Carbon::today();
+        $startOfMonth = Carbon::now()->addMonths($this->monthOffset)->startOfMonth();
+
         $activePetsCount = Info::where('userID', $userId)
             ->where('is_archived', false)
             ->count();
@@ -118,6 +237,14 @@ class Home extends Component
             'upcomingVisitsCount' => $allUpcoming->count(),
             'completedVisitsCount' => Appointment::where('userID', $userId)->where('status', 'Completed')->count(),
             'totalAppointmentsCount' => Appointment::where('userID', $userId)->count(),
+            // Calendar Data
+            'daysInMonth' => $startOfMonth->daysInMonth,
+            'firstDayOfWeek' => $startOfMonth->dayOfWeek,
+            'currentMonthName' => $startOfMonth->format('F Y'),
+            'currentYearMonth' => $startOfMonth->format('Y-m'),
+            'today' => $today,
+            'unavailableDates' => $this->getUnavailableDates(),
+            'timeSlots' => $this->getAvailableTimeSlots(),
         ]);
     }
 }

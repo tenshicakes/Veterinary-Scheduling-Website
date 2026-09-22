@@ -5,7 +5,7 @@
         <p class="text-gray-500 mt-1 font-medium">Manage your personal information and pets.</p>
     </div>
 
-    <!-- Tab Navigation -->
+    <!-- Tabs -->
     <div class="flex gap-4 mb-8 border-b border-gray-200">
         <button wire:click="$set('activeTab', 'profile')" 
                 class="px-4 py-2 font-bold transition border-b-4 {{ $activeTab == 'profile' ? 'border-blue text-blue' : 'border-transparent text-gray-400 hover:text-gray-600' }}">
@@ -17,11 +17,11 @@
         </button>
     </div>
 
-    <!-- TAB 1: MY PROFILE -->
+    <!-- MY PROFILE TAB -->
     @if($activeTab == 'profile')
         <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
             
-            <!-- LEFT COLUMN: Profile Info & Photo Upload -->
+            <!-- LEFT is profile info and uploading of photo -->
             <div class="md:col-span-2 bg-white rounded-xl shadow-sm border border-gray-200 p-6">
                 <h3 class="text-xl font-bold text-blue mb-6 border-b border-gray-100 pb-2">Personal Information</h3>
                 
@@ -31,18 +31,18 @@
 
                 <form wire:submit="updateProfile" class="flex flex-col gap-5">
                     
-                    <!-- Photo Upload Section -->
+                    <!-- Photo Upload -->
                     <div class="flex items-center gap-6 mb-2">
-                        <!-- Displays the dynamic photo from storage, or falls back to a default asset if null -->
+                        <!-- Displays the photo from storage, or use a default asset if no photo -->
                         <div class="w-24 h-24 rounded-full overflow-hidden border-2 border-blue bg-gray-100 shrink-0">
                             @if ($new_photo)
-                                <!-- Shows temporary live preview before saving -->
+                                <!-- Show preview before saving -->
                                 <img src="{{ $new_photo->temporaryUrl() }}" class="w-full h-full object-cover">
                             @elseif (Auth::user()->profile_image)
-                                <!-- Shows saved dynamic image from storage -->
+                                <!-- Shows saved image from storage -->
                                 <img src="{{ asset('storage/' . Auth::user()->profile_image) }}" class="w-full h-full object-cover">
                             @else
-                                <!-- Default fallback if no photo exists -->
+                                <!-- Default if no photo -->
                                 <img src="{{ asset('images/DogCat.png') }}" class="w-full h-full object-cover">
                             @endif
                         </div>
@@ -54,7 +54,7 @@
                         </div>
                     </div>
 
-                    <!-- Input Fields -->
+                    <!-- Input fields -->
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
                         <div>
                             <label class="block text-sm font-bold text-blue mb-2">Full Name</label>
@@ -87,7 +87,7 @@
                 </form>
             </div>
 
-            <!-- RIGHT COLUMN: Security / Password -->
+            <!-- RIGHT is  Security / Password -->
             <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6 h-fit">
                 <h3 class="text-xl font-bold text-blue mb-6 border-b border-gray-100 pb-2">Security</h3>
 
@@ -121,7 +121,7 @@
         </div>
     @endif
 
-    <!-- TAB 2: MY PETS -->
+    <!-- MY PETS TAB -->
     @if($activeTab == 'pets')
         <div class="mb-6 flex justify-between items-center">
             <h3 class="text-2xl font-bold text-blue">Registered Pets</h3>
@@ -139,7 +139,7 @@
             @forelse($pets as $pet)
                 <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6 flex flex-col items-center text-center transition hover:shadow-md">
                     
-                    <!-- Dynamic Pet Photo -->
+                    <!--  Pet Photo -->
                     <div class="w-24 h-24 rounded-full overflow-hidden border-2 border-blue bg-gray-100 mb-4 shrink-0">
                         @if($pet->petimage)
                             <img src="{{ asset('storage/' . $pet->petimage) }}" alt="{{ $pet->petname }}" class="w-full h-full object-cover">
@@ -172,11 +172,11 @@
         </div>
     @endif
 
-    <!-- ========================================== -->
-<!-- MODALS (Place at the very bottom of file)  -->
-<!-- ========================================== -->
+   
+<!-- FORMS  -->
 
-<!-- ADD / EDIT PET MODAL -->
+
+<!--add or edit pet form -->
 @if($isPetModalOpen)
     <div class="fixed inset-0 bg-gray-900/60 z-50 flex items-center justify-center p-4">
         <div class="bg-white rounded-xl shadow-2xl w-full max-w-lg p-6 md:p-8">
@@ -189,7 +189,7 @@
 
             <form wire:submit="savePet" class="flex flex-col gap-4">
                 
-                <!-- Pet Photo Upload -->
+                <!-- Pet picture Upload -->
                 <div class="flex flex-col items-center gap-3 mb-2">
                     <div class="w-20 h-20 rounded-full overflow-hidden border-2 border-blue bg-gray-100 shrink-0">
                         @if ($petimage)
@@ -232,7 +232,7 @@
     </div>
 @endif
 
-<!-- MEDICAL HISTORY MODAL -->
+<!-- MEDICAL HISTORY FORM -->
 @if($isHistoryModalOpen)
     <div class="fixed inset-0 bg-gray-900/60 z-50 flex items-center justify-center p-4">
         <div class="bg-white rounded-xl shadow-2xl w-full max-w-2xl p-6 md:p-8 max-h-[85vh] flex flex-col">
