@@ -35,7 +35,9 @@
     </div>
 
     <!-- Cards Grid (1 col mobile, 2 tablet, 3 desktop) -->
-    @include ('livewire.shared.appointment-card')
+    
+    @include('livewire.shared.appointment-card')
+
 
     
 
