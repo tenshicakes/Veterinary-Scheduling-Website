@@ -7,6 +7,7 @@ use Livewire\WithFileUploads;
 use Livewire\Attributes\Layout;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Storage;
 use App\Models\User;
 
 #[Layout('layouts.usermaster')]
@@ -67,11 +68,17 @@ class Profile extends Component
             'address' => 'nullable|string|max:255',
         ]);
 
-        // 1. Handle Photo Upload if the user selected a new file
+// 1. Handle Photo Upload if the user selected a new file
         if ($this->new_photo) {
             $this->validate(['new_photo' => 'image|max:2048']); // Max 2MB
+
+            // Delete old photo if exists
+            if ($user->profile_image) {
+                Storage::disk('public')->delete($user->profile_image);
+            }
+
             // Saves to storage/app/public/profile_photos and automatically generates a unique filename!
-            $path = $this->new_photo->store('profile_photos', 'public'); 
+            $path = $this->new_photo->store('profile_photos', 'public');
             $user->profile_image = $path;
         }
 
@@ -153,6 +160,10 @@ class Profile extends Component
         
         // Handle Photo Upload seamlessly using the storage link
         if ($this->petimage) {
+            // Delete old photo if exists
+            if ($pet->petimage) {
+                Storage::disk('public')->delete($pet->petimage);
+            }
             $path = $this->petimage->store('pet_photos', 'public');
             $pet->petimage = $path;
         }
@@ -187,7 +198,7 @@ class Profile extends Component
         if ($pet) {
             $this->historyPetName = $pet->petname;
             
-            // Strictly fetch only 'Completed' appointments as per scope requirements
+            // only "completed" stats
             $this->petHistory = \App\Models\Appointment::select(
                     'appointment_table.*', 
                     'service_table.servicename'
