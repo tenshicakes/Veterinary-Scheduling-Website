@@ -1,17 +1,28 @@
 <div class="max-w-7xl mx-auto p-4 md:p-8">
     
     <!-- GIANT TEXT ABOVE WITH A BOOK APPOINTMENT BUTTON -->
-    <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-8">
+    <div class="flex flex-col md:flex-row justify-between items-center gap-6 mb-8 bg-blue-50 rounded-sm shadow-md border border-gray-200 p-6 overflow-hidden">
+    
+    <!-- Left is Header, Subtext, and Button -->
+    <div class="flex flex-col items-start gap-4 w-full md:w-auto">
         <div>
             <h2 class="text-3xl font-extrabold text-blue">Welcome back, {{ Auth::user()->fullname }}!</h2>
             <p class="text-gray-500 mt-1 font-medium">Here is an overview of your upcoming clinic visits.</p>
         </div>
         
-        <a href="{{ route('user.appointment') }}" wire:navigate class="bg-blue text-white font-bold py-3 px-6 rounded-lg shadow-md hover:bg-blue/90 transition flex items-center gap-2">
+        <a href="{{ route('user.appointment') }}" wire:navigate class="bg-red text-white font-bold py-3 px-6 rounded-lg shadow-md hover:bg-blue/90 transition flex items-center gap-2">
             <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="M12 5v14"/></svg>
             Book New Appointment
         </a>
     </div>
+
+    <!-- Far-Right is Docked Image -->
+    <!-- On mobile view -->
+    <div class="shrink-0 w-full md:w-auto flex justify-center md:justify-end">
+        <img src="{{ asset('images/DogCat.png') }}" alt="Clinic Illustration" class="max-h-36 w-auto object-contain object-bottom-right">
+    </div>
+
+</div>
 
     <!-- STATUS INDICATOR OF THE BOOKED APPOINTMENT -->
     @if (session()->has('success_cancel'))
@@ -70,7 +81,7 @@
                 <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect width="18" height="18" x="3" y="4" rx="2" ry="2"/><line x1="16" x2="16" y1="2" y2="6"/><line x1="8" x2="8" y1="2" y2="6"/><line x1="3" x2="21" y1="10" y2="10"/></svg>
             </div>
             <h4 class="text-xl font-bold text-gray-800 mb-2">No Upcoming Appointments</h4>
-            <p class="text-gray-500 mb-6 max-w-md">Your schedule is currently clear. Book a new appointment to ensure your pets stay healthy and happy!</p>
+            <p class="text-gray-500 mb-6 max-w-md">You have no scheduled appointments. Book a new appointment to ensure your pets stay healthy and happy!</p>
         </div>
     @endif
 
@@ -86,7 +97,7 @@
             <h3 class="text-3xl font-extrabold text-gray-800">{{ $activePetsCount }}</h3>
         </a>
 
-        <button wire:click="openUpcomingModal" class="bg-white rounded-xl shadow-sm border border-gray-200 p-6 flex flex-col items-center justify-center text-center transition hover:shadow-md hover:bg-orange-50 border-b-4 border-b-gray-400 cursor-pointer group w-full">
+        <button wire:click="openUpcomingModal" class="bg-white rounded-xl shadow-sm border border-gray-200 p-6 flex flex-col items-center justify-center text-center transition hover:shadow-md hover:bg-blue-50 border-b-4 border-b-gray-400 cursor-pointer group w-full">
             <div class="text-orange-500 mb-3 group-hover:scale-110 transition-transform">
                 <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="18" height="18" x="3" y="4" rx="2" ry="2"/><line x1="16" x2="16" y1="2" y2="6"/><line x1="8" x2="8" y1="2" y2="6"/><line x1="3" x2="21" y1="10" y2="10"/></svg>
             </div>
@@ -94,7 +105,7 @@
             <h3 class="text-3xl font-extrabold text-gray-800">{{ $upcomingVisitsCount }}</h3>
         </button>
 
-        <button wire:click="openCompletedModal" class="bg-white rounded-xl shadow-sm border border-gray-200 p-6 flex flex-col items-center justify-center text-center transition hover:shadow-md hover:bg-green-50 border-b-4 border-b-gray-400 cursor-pointer group w-full">
+        <button wire:click="openCompletedModal" class="bg-white rounded-xl shadow-sm border border-gray-200 p-6 flex flex-col items-center justify-center text-center transition hover:shadow-md hover:bg-blue-50 border-b-4 border-b-gray-400 cursor-pointer group w-full">
             <div class="text-green-500 mb-3 group-hover:scale-110 transition-transform">
                 <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>
             </div>
@@ -102,7 +113,7 @@
             <h3 class="text-3xl font-extrabold text-gray-800">{{ $completedVisitsCount }}</h3>
         </button>
 
-        <button wire:click="openHistoryModal" class="bg-white rounded-xl shadow-sm border border-gray-200 p-6 flex flex-col items-center justify-center text-center transition hover:shadow-md hover:bg-gray-50 border-b-4 border-b-gray-400 cursor-pointer group w-full">
+        <button wire:click="openHistoryModal" class="bg-white rounded-xl shadow-sm border border-gray-200 p-6 flex flex-col items-center justify-center text-center transition hover:shadow-md hover:bg-blue-50 border-b-4 border-b-gray-400 cursor-pointer group w-full">
             <div class="text-gray-500 mb-3 group-hover:scale-110 transition-transform">
                 <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v18h18"/><path d="m19 9-5 5-4-4-3 3"/></svg>
             </div>

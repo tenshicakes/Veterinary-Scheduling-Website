@@ -12,7 +12,7 @@ class PreventBackHistory
     {
         // If user is not authenticated but trying to access protected page
         if (!Auth::check() && !$request->is('/') && !$request->is('logout')) {
-            return redirect()->route('landing.page');
+            return redirect()->route('login');
         }
 
         $response = $next($request);

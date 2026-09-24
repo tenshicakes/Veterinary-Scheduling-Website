@@ -12,7 +12,7 @@
             @forelse($services as $service)
                 
                 <tr wire:click="$set('selectedService', '{{ $service->serviceID ?? $service->id }}')" 
-                class="cursor-pointer border-b border-gray-200 hover:bg-blue transition 
+                class="cursor-pointer border-b border-gray-200 hover:bg-blue  transition 
                 {{ $selectedService == ($service->serviceID ?? $service->id) ? 'bg-blue border-l-4 border-l-primary' : 'border-l-4 border-l-transparent' }}">
                     
                     <td class="p-3 sm:p-4 font-medium transition {{ $selectedService == ($service->serviceID ?? $service->id) ? 'text-white' : 'text-gray-800 group-hover:text-white' }}">

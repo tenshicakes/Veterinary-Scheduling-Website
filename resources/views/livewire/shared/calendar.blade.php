@@ -46,7 +46,7 @@
             @else
                 <!-- Available day -->
                 <div wire:click="selectDate('{{ $dateString }}')" 
-                     class="p-2 text-sm font-bold rounded cursor-pointer transition hover:bg-blue
+                     class="p-2 text-sm font-bold rounded cursor-pointer transition hover:bg-blue hover:text-white
                      {{ $selectedDate === $dateString ? 'bg-blue text-white shadow-md' : 'text-gray-700 bg-white border border-gray-100' }}">
                     {{ $day }}
                 </div>
