@@ -1,12 +1,12 @@
 <div class="max-w-7xl mx-auto p-4 md:p-8">
     
-    <!-- GIANT TEXT ABOVE WITH A BOOK APPOINTMENT BUTTON -->
-    <div class="flex flex-col md:flex-row justify-between items-center gap-6 mb-8 bg-blue-50 rounded-sm shadow-md border border-gray-200 p-6 overflow-hidden">
-    
-    <!-- Left is Header, Subtext, and Button -->
-    <div class="flex flex-col items-start gap-4 w-full md:w-auto">
+    <div class="flex flex-col md:flex-row justify-between items-stretch gap-4 mb-8 bg-blue-50 rounded-xl shadow-md border border-gray-200 overflow-hidden">
+
+    <!-- Left Content (Holds the inner padding now) -->
+    <div class="p-6 md:p-8 flex flex-col justify-center items-start gap-4 flex-1">
         <div>
-            <h2 class="text-3xl font-extrabold text-blue">Welcome back, {{ Auth::user()->fullname }}!</h2>
+            <h2 class="text-2xl font-lg text-blue">Welcome back,</h2>
+            <h2 class="text-3xl font-extrabold text-blue">{{ Auth::user()->fullname }}!</h2>
             <p class="text-gray-500 mt-1 font-medium">Here is an overview of your upcoming clinic visits.</p>
         </div>
         
@@ -16,10 +16,9 @@
         </a>
     </div>
 
-    <!-- Far-Right is Docked Image -->
-    <!-- On mobile view -->
-    <div class="shrink-0 w-full md:w-auto flex justify-center md:justify-end">
-        <img src="{{ asset('images/DogCat.png') }}" alt="Clinic Illustration" class="max-h-36 w-auto object-contain object-bottom-right">
+    <!-- Right Side: Edge-to-Edge Docked Image -->
+    <div class="shrink-0 flex items-end justify-center md:justify-end self-end">
+        <img src="{{ asset('images/catdog.png') }}" alt="Clinic Illustration" class="max-h-36 md:max-h-48 w-auto object-contain object-bottom md:object-bottom-right">
     </div>
 
 </div>

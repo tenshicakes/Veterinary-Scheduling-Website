@@ -1,4 +1,4 @@
-@props(['services', 'selectedService' => null])
+@props(['services', 'selectedService' => null, 'isReadOnly' => false])
 
 <div class="overflow-x-auto bg-white rounded-lg border border-gray-200 shadow-sm">
     <table class="w-full text-left border-collapse">
@@ -11,14 +11,20 @@
         <tbody>
             @forelse($services as $service)
                 
-                <tr wire:click="$set('selectedService', '{{ $service->serviceID ?? $service->id }}')" 
-                class="cursor-pointer border-b border-gray-200 hover:bg-blue  transition 
-                {{ $selectedService == ($service->serviceID ?? $service->id) ? 'bg-blue border-l-4 border-l-primary' : 'border-l-4 border-l-transparent' }}">
+                <tr 
+                    @if(!$isReadOnly)
+                        wire:click="$set('selectedService', '{{ $service->serviceID ?? $service->id }}')"
+                        class="cursor-pointer border-b border-gray-200 hover:bg-blue transition 
+                        {{ $selectedService == ($service->serviceID ?? $service->id) ? 'bg-blue border-l-4 border-l-primary' : 'border-l-4 border-l-transparent' }}"
+                    @else
+                        class="border-b border-gray-200"
+                    @endif
+                >
                     
-                    <td class="p-3 sm:p-4 font-medium transition {{ $selectedService == ($service->serviceID ?? $service->id) ? 'text-white' : 'text-gray-800 group-hover:text-white' }}">
+                    <td class="p-3 sm:p-4 font-medium transition {{ !$isReadOnly && $selectedService == ($service->serviceID ?? $service->id) ? 'text-white' : 'text-gray-800' }}">
                         {{ $service->servicename }}
                     </td>
-                    <td class="p-3 sm:p-4 font-bold transition {{ $selectedService == ($service->serviceID ?? $service->id) ? 'text-white' : 'text-primary group-hover:text-white' }}">
+                    <td class="p-3 sm:p-4 font-bold transition {{ !$isReadOnly && $selectedService == ($service->serviceID ?? $service->id) ? 'text-white' : 'text-primary' }}">
                         ₱{{ number_format($service->price, 2) }}
                     </td>
                 </tr>
