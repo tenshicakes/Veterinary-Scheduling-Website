@@ -20,7 +20,6 @@ class Home extends Component
     // --- RESCHEDULE MODAL VARIABLES ---
     public $isRescheduling = false;
     public $rescheduleApptId = null;
-    public $monthOffset = 0;
     public $selectedDate = null;
     public $selectedTime = null;
 
@@ -213,9 +212,22 @@ class Home extends Component
         $nearestAppointment = $allUpcoming->first(); 
         $otherAppointments = $allUpcoming->skip(1);  
 
-        // Calendar variables
-        $today = Carbon::today();
-        $startOfMonth = Carbon::now()->addMonths($this->monthOffset)->startOfMonth();
+// Calendar variables
+        $now = Carbon::now();
+        $startDate = $now->copy()->addDay()->startOfDay(); // Tomorrow
+        
+        // Generate 3 available dates (tomorrow + 2 days)
+        $availableDates = [];
+        for ($i = 0; $i < 3; $i++) {
+            $availableDates[] = $startDate->copy()->addDays($i)->format('Y-m-d');
+        }
+
+        // Calendar for month containing first available date
+        $startOfMonth = $startDate->copy()->startOfMonth();
+        $daysInMonth = $startOfMonth->daysInMonth;
+        $firstDayOfWeek = $startOfMonth->dayOfWeek;
+        $currentMonthName = $startOfMonth->format('F Y');
+        $currentYearMonth = $startOfMonth->format('Y-m');
 
         $activePetsCount = Info::where('userID', $userId)
             ->where('is_archived', false)
@@ -233,16 +245,17 @@ class Home extends Component
         return view('livewire.user.home', [
             'nearestAppointment' => $nearestAppointment,
             'otherAppointments' => $otherAppointments,
-            'activePetsCount' => Info::where('userID', $userId)->where('is_archived', false)->count(),
-            'upcomingVisitsCount' => $allUpcoming->count(),
-            'completedVisitsCount' => Appointment::where('userID', $userId)->where('status', 'Completed')->count(),
-            'totalAppointmentsCount' => Appointment::where('userID', $userId)->count(),
+            'activePetsCount' => $activePetsCount,
+            'upcomingVisitsCount' => $upcomingVisitsCount,
+            'completedVisitsCount' => $completedVisitsCount,
+            'totalAppointmentsCount' => $totalAppointmentsCount,
             // Calendar Data
-            'daysInMonth' => $startOfMonth->daysInMonth,
-            'firstDayOfWeek' => $startOfMonth->dayOfWeek,
-            'currentMonthName' => $startOfMonth->format('F Y'),
-            'currentYearMonth' => $startOfMonth->format('Y-m'),
-            'today' => $today,
+            'daysInMonth' => $daysInMonth,
+            'firstDayOfWeek' => $firstDayOfWeek,
+            'currentMonthName' => $currentMonthName,
+            'currentYearMonth' => $currentYearMonth,
+            'today' => $startDate,
+            'availableDates' => $availableDates,
             'unavailableDates' => $this->getUnavailableDates(),
             'timeSlots' => $this->getAvailableTimeSlots(),
         ]);

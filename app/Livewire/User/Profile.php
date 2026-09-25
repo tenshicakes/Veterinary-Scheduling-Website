@@ -1,5 +1,6 @@
 <?php
 namespace App\Livewire\User;
+
 use Livewire\Component;
 use App\Models\Info;
 use App\Models\Appointment;
@@ -8,8 +9,8 @@ use Livewire\Attributes\Layout;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Storage;
+use Carbon\Carbon;
 use App\Models\User;
-
 #[Layout('layouts.usermaster')]
 class Profile extends Component
 {
@@ -158,7 +159,7 @@ class Profile extends Component
         // Find existing pet or create a new one
         $pet = $this->pet_infoID ? \App\Models\Info::find($this->pet_infoID) : new \App\Models\Info();
         
-        // Handle Photo Upload seamlessly using the storage link
+        // Handle Photo Upload 
         if ($this->petimage) {
             // Delete old photo if exists
             if ($pet->petimage) {
@@ -225,8 +226,18 @@ class Profile extends Component
                                       ->where('is_archived', false)
                                       ->get();
 
+        // Calculate available dates for reschedule: tomorrow + 2 more days (3 days total)
+        $now = Carbon::now();
+        $startDate = $now->copy()->addDay()->startOfDay(); // Tomorrow
+        
+        $availableDates = [];
+        for ($i = 0; $i < 3; $i++) {
+            $availableDates[] = $startDate->copy()->addDays($i)->format('Y-m-d');
+        }
+
         return view('livewire.user.profile', [
-            'pets' => $activePets
+            'pets' => $activePets,
+            'availableDates' => $availableDates,
         ]);
     }
 }

@@ -7,7 +7,7 @@
     @vite('resources/css/app.css') 
     @livewireStyles
     <script>
-        // Prevent back navigation after logout
+        
         (function() {
             var params = new URLSearchParams(window.location.search);
             if (params.get('logout') === '1') {

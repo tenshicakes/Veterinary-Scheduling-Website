@@ -89,7 +89,7 @@
             <div class="flex flex-col md:flex-row gap-6">
                 <!-- LEFT SIDE: CALENDAR -->
                 <div class="w-full md:w-1/2">
-                    @include('livewire.shared.calendar')
+                    @include('livewire.shared.calendar', ['availableDates' => $availableDates, 'unavailableDates' => $unavailableDates, 'selectedDate' => $selectedDate, 'currentYearMonth' => $currentYearMonth, 'currentMonthName' => $currentMonthName, 'firstDayOfWeek' => $firstDayOfWeek, 'daysInMonth' => $daysInMonth, 'today' => $today])
                 </div>
 
                 <!-- RIGHT SIDE: TIME SLOTS -->

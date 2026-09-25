@@ -93,8 +93,9 @@
     <!-- The padding-left prevents the content from hiding behind the bookmark button -->
     <main class="min-h-screen pl-16 md:pl-24 p-8">
         {{ $slot }}
-
-        <footer class="bg-white border-t border-gray-200 mt-30 w-full">
+    </main>
+    
+    <footer class="bg-white border-t border-gray-200 mt-5 w-full">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <div class="flex flex-col md:flex-row justify-between items-center gap-6">
     
@@ -142,7 +143,6 @@
         </div>
     </div>
 </footer>
-    </main>
 
     @livewireScripts
 </body>

@@ -26,9 +26,7 @@ class Appointments extends Component
 
     public $reschedulePatientName = '';
 
-    // --- SHARED CALENDAR VARIABLES ---
-    public $monthOffset = 0;
-
+    // --- SHARED CALENDAR VARIABLE ---
     public $selectedDate = null;
 
     public $selectedTime = null;
@@ -97,24 +95,7 @@ class Appointments extends Component
         $this->closeRescheduleModal();
         session()->flash('success', 'Appointment successfully rescheduled!');
     }
-
-    // --- SHARED CALENDAR METHODS (Copied from User side) ---
-
-    public function nextMonth()
-    {
-        $this->monthOffset++;
-        $this->selectedDate = null;
-        $this->selectedTime = null;
-    }
-
-    public function previousMonth()
-    {
-        if ($this->monthOffset > 0) {
-            $this->monthOffset--;
-            $this->selectedDate = null;
-            $this->selectedTime = null;
-        }
-    }
+// --- SHARED CALENDAR METHODS ---
 
     public function selectDate($date)
     {
@@ -165,6 +146,7 @@ class Appointments extends Component
                     continue;
                 }
             }
+
             $availableSlots[] = $slot;
         }
 
@@ -173,10 +155,7 @@ class Appointments extends Component
 
     public function render()
     {
-        // 1. I added the 10-Minute Auto-Cancel logic here so it cleans up the DB before loading the cards
-        AppointmentModel::where('status', 'Pending')
-            ->where('created_at', '<', Carbon::now()->subMinutes(10))
-            ->update(['status' => 'Cancelled']);
+        // 1. 10-Minute Auto-Cancel logic removed
 
         // 2. Figure out which statuses to load based on the clicked tab
         $statuses = [];
@@ -190,8 +169,6 @@ class Appointments extends Component
             $statuses = ['Completed', 'Cancelled', 'No-Show', 'Rejected'];
         }
 
-        // 3. I used standard SQL Joins here to pull the Patient Name, Pet Name, and Service Price directly.
-        // This avoids complex Eloquent Model Shenanigans and keeps everything flat and easy to read.
         // 3. I used standard SQL Joins here to pull the Patient Name, Pet Name, and Service Price directly.
         $query = AppointmentModel::select(
             'appointment_table.*',
@@ -215,22 +192,29 @@ class Appointments extends Component
 
         // 5. I added this filtering block to apply the sorting based on the dropdown selection
         if ($this->sortFilter == 'newest_request') {
-            $query->orderBy('appointment_table.created_at', 'desc'); // Most recent bookings first
+            $query->orderBy('appointment_table.created_at', 'desc');
         } elseif ($this->sortFilter == 'oldest_request') {
-            $query->orderBy('appointment_table.created_at', 'asc'); // Oldest bookings first
+            $query->orderBy('appointment_table.created_at', 'asc');
         } elseif ($this->sortFilter == 'nearest_appt') {
-            $query->orderBy('appointment_table.appointmentdate', 'asc') // Nearest clinic visit
+            $query->orderBy('appointment_table.appointmentdate', 'asc')
                 ->orderBy('appointment_table.appointmenttime', 'asc');
         } elseif ($this->sortFilter == 'farthest_appt') {
-            $query->orderBy('appointment_table.appointmentdate', 'desc') // Furthest clinic visit
+            $query->orderBy('appointment_table.appointmentdate', 'desc')
                 ->orderBy('appointment_table.appointmenttime', 'desc');
         }
 
         $appointments = $query->paginate(10);
 
-        // --- SHARED CALENDAR RENDER MATH ---
-        $today = Carbon::today();
-        $startOfMonth = Carbon::now()->addMonths($this->monthOffset)->startOfMonth();
+        // --- CALENDAR SETUP FOR RESCHEDULE (3 days: tomorrow + 2 days) ---
+        $now = Carbon::now();
+        $startDate = $now->copy()->addDay()->startOfDay(); // Tomorrow
+        
+        $availableDates = [];
+        for ($i = 0; $i < 3; $i++) {
+            $availableDates[] = $startDate->copy()->addDays($i)->format('Y-m-d');
+        }
+
+        $startOfMonth = $startDate->copy()->startOfMonth();
         $daysInMonth = $startOfMonth->daysInMonth;
         $firstDayOfWeek = $startOfMonth->dayOfWeek;
         $currentMonthName = $startOfMonth->format('F Y');
@@ -242,7 +226,8 @@ class Appointments extends Component
             'firstDayOfWeek' => $firstDayOfWeek,
             'currentMonthName' => $currentMonthName,
             'currentYearMonth' => $currentYearMonth,
-            'today' => $today,
+            'today' => $startDate,
+            'availableDates' => $availableDates,
             'unavailableDates' => $this->getUnavailableDates(),
             'timeSlots' => $this->getAvailableTimeSlots(),
         ]);

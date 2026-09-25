@@ -4,12 +4,11 @@ namespace App\Livewire\User;
 
 use App\Models\Appointment as AppointmentModel;
 use App\Models\Info;
-// Bringing in the models so I can talk to my custom tables
 use App\Models\Service;
-use Carbon\Carbon; // Maps to info_table
-use Illuminate\Support\Facades\Auth; // Maps to service_table
+use Carbon\Carbon;
+use Illuminate\Support\Facades\Auth;
 use Livewire\Attributes\Layout;
-use Livewire\Component; // Laravel's built-in date tool for the calendar
+use Livewire\Component;
 
 #[Layout('layouts.usermaster')]
 class Appointment extends Component
@@ -26,34 +25,10 @@ class Appointment extends Component
 
     public $selectedTime = null;
 
-    // Counter for the calendar (0 = current month, 1 = next month, etc.)
-    public $monthOffset = 0;
-
     // Step 4 inputs for payment and extra instructions
     public $referenceNumber = '';
 
     public $notes = '';
-
-    // --- CALENDAR NAVIGATION ---
-
-    // Adds 1 to the month counter when they click the next arrow
-    public function nextMonth()
-    {
-        $this->monthOffset++;
-        $this->selectedDate = null; // Clear their selection if they change months so it doesn't bug out
-        $this->selectedTime = null;
-    }
-
-    // Subtracts 1 from the month counter when they click the back arrow
-    public function previousMonth()
-    {
-        // Prevent them from going back to past months (can't book in the past anyway)
-        if ($this->monthOffset > 0) {
-            $this->monthOffset--;
-            $this->selectedDate = null;
-            $this->selectedTime = null;
-        }
-    }
 
     // --- SCHEDULING LOGIC ---
 
@@ -87,7 +62,7 @@ class Appointment extends Component
             ->pluck('appointmenttime')
             ->toArray();
 
-        // Convert DB military time (e.g., 13:00:00) back to 12hr format (01:00 PM) so we can compare it
+        
         $bookedSlots = array_map(function ($time) {
             return Carbon::parse($time)->format('h:i A');
         }, $bookedRecords);
@@ -213,23 +188,31 @@ class Appointment extends Component
     // This runs every time the page loads or a button is clicked
     public function render()
     {
-        // --- 10-MINUTE AUTO-CANCEL LOGIC ---
-        // Automatically sweeps the database and cancels any 'Pending' appointments older than 10 minutes
-        AppointmentModel::where('status', 'Pending')
-            ->where('created_at', '<', Carbon::now()->subMinutes(10))
-            ->update(['status' => 'Cancelled']);
-
         // Grab the logged-in user's pets and the active clinic services from the DB
         $pets = Info::where('userID', Auth::id())->get();
         $services = Service::where('isactive', true)->get();
 
-        // Set up all the math for the calendar based on the month offset
-        $today = Carbon::today();
-        $startOfMonth = Carbon::now()->addMonths($this->monthOffset)->startOfMonth();
+        // Calculate available booking dates: tomorrow + 2 more days (3 days total)
+        $now = Carbon::now();
+        $startDate = $now->copy()->addDay()->startOfDay(); // Tomorrow
+        
+        // Generate array of 3 available dates (tomorrow, +1, +2)
+        $availableDates = [];
+        for ($i = 0; $i < 3; $i++) {
+            $availableDates[] = $startDate->copy()->addDays($i)->format('Y-m-d');
+        }
+
+        // Set up calendar for the month containing the first available date
+        $startOfMonth = $startDate->copy()->startOfMonth();
         $daysInMonth = $startOfMonth->daysInMonth;
         $firstDayOfWeek = $startOfMonth->dayOfWeek; // 0 = Sun, 6 = Sat
         $currentMonthName = $startOfMonth->format('F Y');
         $currentYearMonth = $startOfMonth->format('Y-m');
+
+        // Auto-set selected date to tomorrow ONLY if not already selected
+        if (! $this->selectedDate || ! in_array($this->selectedDate, $availableDates)) {
+            $this->selectedDate = $availableDates[0];
+        }
 
         // Send all these variables over to the appointment.blade.php view
         return view('livewire.user.appointment', [
@@ -239,7 +222,8 @@ class Appointment extends Component
             'firstDayOfWeek' => $firstDayOfWeek,
             'currentMonthName' => $currentMonthName,
             'currentYearMonth' => $currentYearMonth,
-            'today' => $today,
+            'today' => $startDate, // Use start date for calendar logic
+            'availableDates' => $availableDates, // Pass the 3 available dates
             'unavailableDates' => $this->getUnavailableDates(),
             'timeSlots' => $this->getAvailableTimeSlots(),
         ]);
