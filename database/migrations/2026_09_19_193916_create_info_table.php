@@ -16,6 +16,7 @@ return new class extends Migration
             $table->string('petbreed')->nullable();
             $table->string('userimage')->nullable();
             $table->string('petimage')->nullable();
+            $table->boolean('is_archived')->default(false)->after('petimage');
             $table->timestamps();
         });
     }

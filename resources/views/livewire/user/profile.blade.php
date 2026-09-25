@@ -29,6 +29,10 @@
                     <div class="p-3 mb-4 text-sm text-green-700 bg-green-100 rounded-lg font-bold">{{ session('success_profile') }}</div>
                 @endif
 
+                @if (session()->has('verification_sent'))
+                    <div class="p-3 mb-4 text-sm text-blue-700 bg-blue-100 rounded-lg font-bold">{{ session('verification_sent') }}</div>
+                @endif
+
                 <form wire:submit="updateProfile" class="flex flex-col gap-5">
                     
                     <!-- Photo Upload -->
@@ -66,6 +70,24 @@
                             <label class="block text-sm font-bold text-blue mb-2">Email Address</label>
                             <input type="email" wire:model="email" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-blue shadow-sm">
                             @error('email') <span class="text-red-500 text-xs mt-1 block">{{ $message }}</span> @enderror
+                            
+                            <!-- Email Verification Status -->
+                            <div class="mt-3 flex items-center gap-3">
+                                @if (Auth::user()->hasVerifiedEmail())
+                                    <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-bold bg-green-100 text-green-700">
+                                        <svg class="w-4 h-4 mr-1" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path></svg>
+                                        Verified
+                                    </span>
+                                @else
+                                    <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-bold bg-yellow-100 text-yellow-700">
+                                        <svg class="w-4 h-4 mr-1" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clip-rule="evenodd"></path></svg>
+                                        Unverified
+                                    </span>
+                                    <button type="button" wire:click="resendVerificationEmail" class="text-sm text-blue-600 font-medium hover:text-blue-800 underline">
+                                        Resend verification email
+                                    </button>
+                                @endif
+                            </div>
                         </div>
 
                         <div>

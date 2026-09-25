@@ -117,6 +117,19 @@ class Profile extends Component
         session()->flash('success_password', 'Password updated successfully!');
     }
 
+    public function resendVerificationEmail()
+    {
+        $user = Auth::user();
+        
+        if ($user->hasVerifiedEmail()) {
+            $this->addError('email', 'Email is already verified.');
+            return;
+        }
+        
+        $user->sendEmailVerificationNotification();
+        session()->flash('verification_sent', 'Verification link sent! Check your inbox.');
+    }
+
     // --- TAB 2: MY PETS LOGIC ---
 
     public function openAddPetModal()

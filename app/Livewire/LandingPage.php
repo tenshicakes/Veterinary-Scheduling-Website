@@ -89,9 +89,14 @@ class LandingPage extends Component
             'role' => 'User',
         ]);
 
-        Auth::login($user);
+        // Send verification email
+        $user->sendEmailVerificationNotification();
 
-        return redirect()->route('user.home');
+        session()->flash('verification_notice', 'Registration successful! Please check your email to verify your account.');
+
+        // Reset form and switch to login
+        $this->reset(['fullname', 'email', 'password', 'phone_number', 'address', 'profile_image']);
+        $this->isLogin = true;
     }
 
     public function render()

@@ -104,6 +104,12 @@
                 <p class="text-gray-500 mt-1 font-medium">Sign up to book your appointments</p>
             </div>
 
+            @if (session()->has('verification_notice'))
+                <div class="p-3 mb-4 text-sm text-blue-700 bg-blue-100 rounded-lg font-medium">
+                    {{ session('verification_notice') }}
+                </div>
+            @endif
+
             <form wire:submit="register" class="flex flex-col gap-5">
                 <div>
                     <label class="block text-sm font-bold text-blue mb-2">Full Name</label>
