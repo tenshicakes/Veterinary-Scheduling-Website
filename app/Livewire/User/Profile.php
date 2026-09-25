@@ -84,14 +84,27 @@ class Profile extends Component
         }
 
         // 2. Save Text Data
+        $emailChanged = $user->email !== $this->email;
         $user->fullname = $this->fullname;
         $user->email = $this->email;
         $user->phone_number = $this->phone_number;
         $user->address = $this->address;
+        
+        // If email changed, reset verification and send new verification email
+        if ($emailChanged) {
+            $user->email_verified_at = null;
+            $user->sendEmailVerificationNotification();
+        }
+        
         $user->save();
 
         $this->new_photo = null; // Clear the temporary upload
-        session()->flash('success_profile', 'Profile updated successfully!');
+        
+        $message = 'Profile updated successfully!';
+        if ($emailChanged) {
+            $message .= ' Email changed - please verify your new email address.';
+        }
+        session()->flash('success_profile', $message);
     }
 
     public function updatePassword()
