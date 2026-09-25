@@ -286,7 +286,7 @@ class Profile extends Component
 
 
 
-    
+
 
     public function render()
     {
@@ -299,7 +299,6 @@ class Profile extends Component
 
         return view('livewire.user.profile', [
             'pets' => $activePets,
-            'availableDates' => $availableDates,
         ]);
     }
 }
