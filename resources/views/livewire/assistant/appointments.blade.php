@@ -40,7 +40,7 @@
         </button>
     </div>
 
-    <!-- Cards Grid (1 col mobile, 2 tablet, 3 desktop) -->
+    <!-- Cards Grid  -->
     
     @include('livewire.shared.appointment-card')
 

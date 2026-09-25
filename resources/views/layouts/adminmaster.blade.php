@@ -13,14 +13,14 @@
     <h1>This is the master page for admins.</h1>
     
     <main>
-        {{ $slot }} <!-- Livewire injects home.blade.php here -->
+        {{ $slot }} 
         
     </main>
     <footer class="bg-white border-t border-gray-200 mt-5 w-full">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <div class="flex flex-col md:flex-row justify-between items-center gap-6">
     
-            <!-- Left Side: Brand & Address -->
+            <!-- Brand & Address -->
             <div class="flex flex-col items-center md:items-start text-center md:text-left">
                 <div class="flex items-center gap-2 mb-2">
    
@@ -39,7 +39,7 @@
                 </p>
             </div>
 
-            <!-- Right Side: Copyright, System Info & Developer Credit -->
+            <!-- Copyright, System Info & Developer Credit -->
             <div class="flex flex-col items-center md:items-end text-sm text-gray-400 font-medium">
                 <p>&copy; {{ date('Y') }} Doc Jay's Veterinary Clinic. All rights reserved.</p>
                 <p class="mt-1">Online Veterinary Appointment Scheduling System</p>

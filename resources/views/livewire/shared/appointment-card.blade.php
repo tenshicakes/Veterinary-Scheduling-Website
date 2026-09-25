@@ -8,7 +8,7 @@
                         Requested on {{ \Carbon\Carbon::parse($appt->created_at)->format('M d, Y - h:i A') }}
                     </div>
 
-                    <!-- Names and Status Badge -->
+                    <!-- Names and Status  -->
                     <div class="flex justify-between items-start mb-4 border-b border-gray-100 pb-3">
                         <div>
                             <h4 class="font-bold text-gray-800 text-lg">{{ $appt->patient_name ?? 'Unknown Owner' }}</h4>
@@ -52,7 +52,7 @@
                 </div>
 
                 @if(!isset($isUserView))
-                <!-- Action Buttons -->
+
                 <div class="flex flex-wrap gap-2 mt-3 pt-3 border-t border-gray-100">
                     @if($appt->status == 'Pending')
                         <!-- confirm to verify payment before approving -->

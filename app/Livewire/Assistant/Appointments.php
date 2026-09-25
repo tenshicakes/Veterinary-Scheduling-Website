@@ -11,25 +11,20 @@ use Livewire\WithPagination;
 #[Layout('layouts.assistantmaster')]
 class Appointments extends Component
 {
-    use WithPagination; // Allows us to use ->paginate(10) safely
+    use WithPagination; 
 
     public $search = '';
-
-    public $activeTab = 'Pending'; // Pending as the default
-
+    public $activeTab = 'Pending'; 
     public $sortFilter = 'newest_request';
-
-    // --- RESCHEDULE MODAL VARIABLES ---
+    // --- RESCHEDULE  VARIABLES ---
     public $isRescheduling = false;
-
     public $rescheduleApptId = null;
-
     public $reschedulePatientName = '';
-
     // --- SHARED CALENDAR VARIABLE ---
     public $selectedDate = null;
-
     public $selectedTime = null;
+
+
 
     public function updatingSearch()
     {
@@ -41,43 +36,41 @@ class Appointments extends Component
         $this->resetPage();
     }
 
-    // Switches tabs and resets pagination
     public function setTab($tab)
     {
         $this->activeTab = $tab;
         $this->resetPage();
     }
 
-    // added a single, reusable method to handle all status changes without writing 5 different functions
     public function updateStatus($id, $newStatus)
     {
         AppointmentModel::where('appointmentID', $id)->update(['status' => $newStatus]);
     }
 
+
+
+
+
+
     // --- RESCHEDULE LOGIC ---
 
-    // Opens the modal and saves which appointment we are moving
     public function openRescheduleModal($id, $patientName)
     {
         $this->rescheduleApptId = $id;
         $this->reschedulePatientName = $patientName;
         $this->isRescheduling = true;
-
-        // Reset the calendar selections for a fresh start
         $this->monthOffset = 0;
         $this->selectedDate = null;
         $this->selectedTime = null;
         $this->resetErrorBag();
     }
 
-    // Closes the modal
     public function closeRescheduleModal()
     {
         $this->isRescheduling = false;
         $this->rescheduleApptId = null;
     }
 
-    // Saves the new date and time to the database
     public function confirmReschedule()
     {
         if (! $this->selectedDate || ! $this->selectedTime) {
@@ -98,8 +91,13 @@ $this->closeRescheduleModal();
 
     public function refreshAppointments()
     {
-        // Triggers a re-render to fetch latest appointment data
+        // 
     }
+
+
+
+
+
 
     // --- SHARED CALENDAR METHODS ---
 
@@ -159,11 +157,13 @@ $this->closeRescheduleModal();
         return $availableSlots;
     }
 
+
+
+
+
     public function render()
     {
-        // 1. 10-Minute Auto-Cancel logic removed
 
-        // 2. Figure out which statuses to load based on the clicked tab
         $statuses = [];
         if ($this->activeTab == 'Pending') {
             $statuses = ['Pending'];
@@ -175,7 +175,6 @@ $this->closeRescheduleModal();
             $statuses = ['Completed', 'Cancelled', 'No-Show', 'Rejected'];
         }
 
-        // 3. I used standard SQL Joins here to pull the Patient Name, Pet Name, and Service Price directly.
         $query = AppointmentModel::select(
             'appointment_table.*',
             'users_table.fullname as patient_name',
@@ -188,7 +187,6 @@ $this->closeRescheduleModal();
             ->leftJoin('service_table', 'appointment_table.serviceID', '=', 'service_table.serviceID')
             ->whereIn('appointment_table.status', $statuses);
 
-        // 4. If they typed something in the search bar, filter the results in real-time
         if (! empty($this->search)) {
             $query->where(function ($q) {
                 $q->where('users_table.fullname', 'like', '%'.$this->search.'%')
@@ -196,7 +194,6 @@ $this->closeRescheduleModal();
             });
         }
 
-        // 5. I added this filtering block to apply the sorting based on the dropdown selection
         if ($this->sortFilter == 'newest_request') {
             $query->orderBy('appointment_table.created_at', 'desc');
         } elseif ($this->sortFilter == 'oldest_request') {
@@ -211,7 +208,7 @@ $this->closeRescheduleModal();
 
         $appointments = $query->paginate(10);
 
-        // --- CALENDAR SETUP FOR RESCHEDULE (3 days: tomorrow + 2 days) ---
+        // --- CALENDAR SETUP FOR RESCHEDULE ---
         $now = Carbon::now();
         $startDate = $now->copy()->addDay()->startOfDay(); // Tomorrow
         
@@ -226,6 +223,10 @@ $this->closeRescheduleModal();
         $currentMonthName = $startOfMonth->format('F Y');
         $currentYearMonth = $startOfMonth->format('Y-m');
 
+
+
+
+        
         return view('livewire.assistant.appointments', [
             'appointments' => $appointments,
             'daysInMonth' => $daysInMonth,

@@ -12,12 +12,12 @@ use Carbon\Carbon;
 #[Layout('layouts.usermaster')]
 class Home extends Component
 {
-// --- MODAL VARIABLES ---
+// --- S ---
     public $isModalOpen = false;
     public $modalTitle = '';
     public $modalAppointments = [];
 
-    // --- RESCHEDULE MODAL VARIABLES ---
+    // --- Reschedule variables ---
     public $isRescheduling = false;
     public $rescheduleApptId = null;
     public $selectedDate = null;
@@ -36,11 +36,9 @@ class Home extends Component
         session()->flash('success_cancel', 'Appointment has been successfully cancelled.');
     }
 
-    // --- MODAL LOGIC ---
     public function openUpcomingModal()
     {
         $this->modalTitle = 'Approved Appointments';
-        // Fetches ONLY approved appointments to display in the modal
         $this->modalAppointments = $this->fetchModalData(['Approved']);
         $this->isModalOpen = true;
     }
@@ -66,7 +64,7 @@ class Home extends Component
         $this->modalAppointments = [];
     }
 
-    // Helper method to fetch the correct data for the shared card
+    // get the correct data from the reused card 
     private function fetchModalData($statuses = [])
     {
         $query = Appointment::select(
@@ -88,7 +86,10 @@ class Home extends Component
         return $query->orderBy('appointment_table.created_at', 'desc')->get();
     }
 
-    // --- RESCHEDULE LOGIC & CALENDAR METHODS ---
+    
+
+
+    //reschedule function
     public function openRescheduleModal($id)
     {
         $this->rescheduleApptId = $id;
@@ -149,7 +150,7 @@ class Home extends Component
 
     public function refreshAppointments()
     {
-        // Triggers a re-render to fetch latest appointment data
+      
     }
 
     public function getUnavailableDates()
@@ -194,11 +195,13 @@ class Home extends Component
         return $availableSlots;
     }
 
+
+
     public function render()
     {
         $userId = Auth::id();
 
-        // Fetch all upcoming appointments (Sorted by nearest date/time first)
+        // get all the upcoming appointments
         $allUpcoming = Appointment::select(
                 'appointment_table.*',
                 'info_table.petname as pet_name',
@@ -213,7 +216,6 @@ class Home extends Component
             ->orderBy('appointment_table.appointmenttime', 'asc')
             ->get();
 
-        // Split the nearest appointment from the rest
         $nearestAppointment = $allUpcoming->first(); 
         $otherAppointments = $allUpcoming->skip(1);  
 
@@ -221,13 +223,12 @@ class Home extends Component
         $now = Carbon::now();
         $startDate = $now->copy()->addDay()->startOfDay(); // Tomorrow
         
-        // Generate 3 available dates (tomorrow + 2 days)
         $availableDates = [];
         for ($i = 0; $i < 3; $i++) {
             $availableDates[] = $startDate->copy()->addDays($i)->format('Y-m-d');
         }
 
-        // Calendar for month containing first available date
+
         $startOfMonth = $startDate->copy()->startOfMonth();
         $daysInMonth = $startOfMonth->daysInMonth;
         $firstDayOfWeek = $startOfMonth->dayOfWeek;
@@ -244,7 +245,6 @@ class Home extends Component
             ->where('status', 'Completed')
             ->count();
 
-        // Total history for this user (All statuses)
         $totalAppointmentsCount = Appointment::where('userID', $userId)->count();
 
         return view('livewire.user.home', [
@@ -254,7 +254,7 @@ class Home extends Component
             'upcomingVisitsCount' => $upcomingVisitsCount,
             'completedVisitsCount' => $completedVisitsCount,
             'totalAppointmentsCount' => $totalAppointmentsCount,
-            // Calendar Data
+ 
             'daysInMonth' => $daysInMonth,
             'firstDayOfWeek' => $firstDayOfWeek,
             'currentMonthName' => $currentMonthName,

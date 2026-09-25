@@ -1,6 +1,6 @@
 <div class="w-full bg-white border border-gray-200 rounded-xl p-6 shadow-sm">
     
-    <!-- Month Header (Static - No Navigation) -->
+    <!-- Month  -->
     <div class="flex items-center justify-between mb-4">
         <div class="w-10"></div>
         
@@ -31,7 +31,6 @@
             @endphp
 
             @if($isUnavailable)
-                <!-- Unavailable day (not in available dates or fully booked) -->
                 <div class="p-2 text-sm font-medium text-gray-300 bg-gray-50 rounded cursor-not-allowed">
                     {{ $day }}
                 </div>

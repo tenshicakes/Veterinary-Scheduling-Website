@@ -41,7 +41,7 @@
         </div>
     @enderror
 
-    <!-- DYNAMIC STEP CONTENT -->
+    <!-- BOOKING STEPS -->
     <div class="min-h-75">
         
         <!-- STEP 1: CHOOSE PET -->
@@ -49,15 +49,12 @@
             <h3 class="text-xl font-bold text-gray-800 mb-4">Which pet is this appointment for?</h3>
             <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
                 @forelse($pets as $pet)
-                    <!-- Clicking this div sets the selectedPet variable instantly -->
+
                     <div wire:click="$set('selectedPet', '{{ $pet->infoID }}')" 
                          class="cursor-pointer border-2 rounded-xl p-4 flex flex-col items-center gap-3 transition hover:shadow-md 
                          {{ $selectedPet == $pet->infoID ? 'border-primary bg-blue-50' : 'border-gray-200 bg-surface' }}">
-                        
-                        <!-- Placeholder for Pet Image -->
+                    
                         <div class="w-20 h-20 bg-gray-200 rounded-full overflow-hidden shrink-0 border border-gray-100">
-
-                            <!-- if 'petimage' exists in the database, it loads from Laravel's storage. If null, it uses the default image. -->
                             @if($pet->petimage)
                                 <img src="{{ asset('storage/' . $pet->petimage) }}" alt="{{ $pet->petname }}" class="w-full h-full object-cover">
                             @else
@@ -87,12 +84,11 @@
             <h3 class="text-xl font-bold text-gray-800 mb-4">Select Date and Time</h3>
             
             <div class="flex flex-col md:flex-row gap-6">
-                <!-- LEFT SIDE: CALENDAR -->
+   
                 <div class="w-full md:w-1/2">
                     @include('livewire.shared.calendar', ['availableDates' => $availableDates, 'unavailableDates' => $unavailableDates, 'selectedDate' => $selectedDate, 'currentYearMonth' => $currentYearMonth, 'currentMonthName' => $currentMonthName, 'firstDayOfWeek' => $firstDayOfWeek, 'daysInMonth' => $daysInMonth, 'today' => $today])
                 </div>
 
-                <!-- RIGHT SIDE: TIME SLOTS -->
                 <div class="w-full md:w-1/2">
                     @include('livewire.shared.timeslot')
                 </div>
@@ -105,7 +101,7 @@
             
             <div class="flex flex-col md:flex-row gap-8">
                 
-                <!-- LEFT SIDE: PREVIEW SUMMARY -->
+                <!-- PREVIEW SUMMARY -->
                 <div class="w-full md:w-1/2 bg-blue-50 border border-blue-100 rounded-xl p-4 md:p-6 h-fit shadow-sm">
                     <h4 class="font-bold text-primary mb-4 border-b border-blue-200 pb-2">Appointment Details</h4>
                     
@@ -142,12 +138,11 @@
                     </div>
                 </div>
 
-                <!-- RIGHT SIDE: INSTAPAY QR & INPUTS -->
+                <!-- INSTAPAY QR & REF NUMBE TEXTBOX -->
                 <div class="w-full md:w-1/2 bg-white border border-gray-200 rounded-xl p-4 md:p-6 shadow-sm flex flex-col items-center">
                     <h4 class="font-bold text-gray-800 mb-2">Scan to Pay via Instapay</h4>
                     <p class="text-xs text-gray-500 text-center mb-4">Please scan the QR code below to process your payment.</p>
                     
-                    <!-- QR Code Image -->
                     <div class="w-40 h-40 border-2 border-dashed border-gray-300 rounded-lg p-2 mb-6 flex items-center justify-center bg-gray-50">
                         <img src="{{ asset('images/DogCat.png') }}" alt="QR Code" class="max-w-full max-h-full object-contain">
                     </div>
@@ -173,7 +168,7 @@
 
     </div>
 
-    <!-- BOTTOM NAVIGATION BUTTONS -->
+    <!-- BOTTOM NBUTTONS -->
     <div class="mt-10 pt-6 border-t border-gray-100 flex items-center justify-between">
         
         @if($currentStep > 1)
@@ -181,7 +176,7 @@
                 Back
             </button>
         @else
-            <div></div> <!-- Spacer -->
+            <div></div> 
         @endif
 
         @if($currentStep < 4)
