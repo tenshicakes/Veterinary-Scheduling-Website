@@ -92,10 +92,16 @@ class Appointments extends Component
             'status' => 'Approved', // Automatically approve it since the clinic staff handled it
         ]);
 
-        $this->closeRescheduleModal();
+$this->closeRescheduleModal();
         session()->flash('success', 'Appointment successfully rescheduled!');
     }
-// --- SHARED CALENDAR METHODS ---
+
+    public function refreshAppointments()
+    {
+        // Triggers a re-render to fetch latest appointment data
+    }
+
+    // --- SHARED CALENDAR METHODS ---
 
     public function selectDate($date)
     {

@@ -1,4 +1,11 @@
-<div class="max-w-7xl mx-auto p-4 md:p-8">
+<div class="max-w-7xl mx-auto p-4 md:p-8" 
+     x-data="{ poll: setInterval(() => { 
+         if (!document.hidden) $wire.call('refreshAppointments'); 
+     }, 30000) }"
+     x-init="window.addEventListener('visibilitychange', () => {
+         if (!document.hidden) $wire.call('refreshAppointments');
+     })"
+>
     
     <div class="flex flex-col md:flex-row justify-between items-stretch gap-4 mb-8 bg-blue-50 rounded-xl shadow-md border border-gray-200 overflow-hidden">
 
@@ -25,7 +32,15 @@
 
     <!-- STATUS INDICATOR OF THE BOOKED APPOINTMENT -->
     @if (session()->has('success_cancel'))
-        <div class="p-4 mb-6 text-sm text-green-700 bg-green-100 rounded-lg font-bold shadow-sm">{{ session('success_cancel') }}</div>
+        <div x-data="{ show: true }" 
+             x-init="setTimeout(() => { show = false }, 3000)" 
+             x-show="show" 
+             x-transition:leave="transition ease-out duration-300"
+             x-transition:leave-start="opacity-100"
+             x-transition:leave-end="opacity-0"
+             class="p-4 mb-6 text-sm text-green-700 bg-green-100 rounded-lg font-bold shadow-sm">
+            {{ session('success_cancel') }}
+        </div>
     @endif
 
     <!-- THE GIANT iNFO CARD WHICH IS THE MOST RECENT APPOINTMENT REGARDLESS OF THE STATUS -->

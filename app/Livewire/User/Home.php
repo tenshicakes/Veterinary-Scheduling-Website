@@ -147,6 +147,11 @@ class Home extends Component
         $this->resetErrorBag('reschedule');
     }
 
+    public function refreshAppointments()
+    {
+        // Triggers a re-render to fetch latest appointment data
+    }
+
     public function getUnavailableDates()
     {
         return Appointment::select('appointmentdate')
