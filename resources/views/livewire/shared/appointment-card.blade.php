@@ -58,10 +58,10 @@
                         <!-- confirm to verify payment before approving -->
                         <button wire:confirm="Approve this appointment? Ensure you have verified the payment notes." 
                                 wire:click="updateStatus({{ $appt->appointmentID }}, 'Approved')" 
-                                class="flex-1 min-w-20 bg-primary text-surface font-bold py-1.5 px-2 rounded shadow-sm hover:bg-blue-800 transition text-xs">Approve</button>
+                                class="flex-1 min-w-20 bg-blue text-white font-bold py-1.5 px-2 rounded shadow-sm hover:bg-blue-900 transition text-xs">Approve</button>
                         
                         <button wire:click="openRescheduleModal({{ $appt->appointmentID }}, '{{ $appt->patient_name ?? 'Unknown Owner' }}')" 
-                                class="flex-1 min-w-20 bg-blue-400 text-white font-bold py-1.5 px-2 rounded shadow-sm hover:bg-blue-500 transition text-xs">Reschedule</button>
+                                class="flex-1 min-w-20 bg-white text-black font-bold py-1.5 px-2 rounded shadow-sm hover:bg-gray-500 hover:text-white transition text-xs">Reschedule</button>
                         
                         <!-- confirm to prevent accidental rejections -->
                         <button wire:confirm="Are you sure you want to REJECT this pending request?" 
@@ -72,15 +72,15 @@
                         <!-- confirm to mark as completed -->
                         <button wire:confirm="Mark this appointment as Completed?" 
                                 wire:click="updateStatus({{ $appt->appointmentID }}, 'Completed')" 
-                                class="flex-1 min-w-18.75 bg-gray-800 text-white font-bold py-1.5 px-2 rounded shadow-sm hover:bg-gray-900 transition text-xs">Complete</button>
+                                class="flex-1 min-w-18.75 bg-blue text-white font-bold py-1.5 px-2 rounded shadow-sm hover:bg-blue-900 transition text-xs">Complete</button>
                         
                         <!-- confirm to verify No-Shows -->
                         <button wire:confirm="Are you sure this patient is a No-Show? This will move them to History." 
                                 wire:click="updateStatus({{ $appt->appointmentID }}, 'No-Show')" 
-                                class="flex-1 min-w-18.75 bg-orange-500 text-white font-bold py-1.5 px-2 rounded shadow-sm hover:bg-orange-600 transition text-xs">No-Show</button>
+                                class="flex-1 min-w-18.75 bg-black text-white font-bold py-1.5 px-2 rounded shadow-sm hover:bg-white hover:text-black transition text-xs">No-Show</button>
                         
                         <button wire:click="openRescheduleModal({{ $appt->appointmentID }}, '{{ $appt->patient_name ?? 'Unknown Owner' }}')" 
-                                class="flex-1 min-w-18.75    bg-blue-400 text-white font-bold py-1.5 px-2 rounded shadow-sm hover:bg-blue-500 transition text-xs">Reschedule</button>
+                                class="flex-1 min-w-18.75    bg-white text-black font-bold py-1.5 px-2 rounded shadow-sm hover:bg-gray-500 hover:text-white transition text-xs">Reschedule</button>
                         
                         <!-- confirm to prevent accidental cancellations -->
                         <button wire:confirm="Are you sure you want to CANCEL this approved appointment?" 

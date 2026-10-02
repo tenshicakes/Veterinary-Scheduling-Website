@@ -9,7 +9,7 @@
     
     <!-- HEADER -->
     <div class="mb-8">
-        <h2 class="text-3xl font-extrabold text-blue">Assistant Dashboard</h2>
+        <h2 class="text-3xl font-extrabold text-blue">Overview</h2>
         <p class="text-gray-500 mt-1 font-medium">Manage today's itinerary and pending appointment requests.</p>
     </div>
 
@@ -24,7 +24,7 @@
     <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
         
         <!-- Action Required (Pending) -->
-        <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6 flex items-center gap-4 border-l-4 border-l-red">
+        <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6 flex items-center gap-4">
             <div class="p-3 bg-red-50 text-red rounded-full">
                 <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
             </div>
@@ -35,7 +35,7 @@
         </div>
 
         <!-- Today's Patients (Approved) -->
-        <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6 flex items-center gap-4 border-l-4 border-l-blue">
+        <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6 flex items-center gap-4 ">
             <div class="p-3 bg-blue-50 text-blue rounded-full">
                 <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
             </div>
@@ -46,15 +46,15 @@
         </div>
 
         <!-- Completed Today -->
-        <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6 flex items-center gap-4 border-l-4 border-l-gray-400">
-            <div class="p-3 bg-gray-100 text-gray-600 rounded-full">
+        <button wire:click="openCompletedTodayModal" class="bg-white rounded-xl shadow-sm border border-gray-200 p-6 flex items-center gap-4 cursor-pointer transition hover:shadow-md hover:bg-blue-50 ">
+            <div class="p-3 bg-green-50 text-green-600 rounded-full">
                 <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>
             </div>
             <div>
                 <p class="text-xs font-bold text-gray-500 uppercase tracking-wider">Completed Today</p>
                 <h3 class="text-3xl font-extrabold text-gray-800">{{ $completedTodayCount }}</h3>
             </div>
-        </div>
+        </button>
     </div>
 
     <!-- MAIN TWO-COLUMN LAYOUT -->
@@ -165,4 +165,31 @@
         </div>
 
     </div>
+
+    <!-- COMPLETED TODAY MODAL -->
+    @if($isModalOpen)
+        <div class="fixed inset-0 bg-gray-900/60 z-50 flex items-center justify-center p-4">
+            <div class="bg-white rounded-xl shadow-2xl w-full max-w-6xl p-6 md:p-8 max-h-[90vh] flex flex-col mt-10 md:mt-0">
+                
+                <div class="flex justify-between items-center mb-6 border-b border-gray-100 pb-4">
+                    <h3 class="text-2xl font-extrabold text-blue">{{ $modalTitle }}</h3>
+                    <button wire:click="closeModal" class="text-gray-400 hover:text-red transition">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>
+                    </button>
+                </div>
+
+                <div class="overflow-y-auto flex-1 pr-2">
+                    @include('livewire.shared.appointment-card', [
+                        'appointments' => $modalAppointments,
+                        'isUserView' => false 
+                    ])
+                </div>
+
+                <div class="mt-6 pt-4 border-t border-gray-100 flex justify-end shrink-0">
+                    <button wire:click="closeModal" class="px-6 py-2 rounded-lg font-bold text-gray-600 bg-gray-100 hover:bg-gray-200 transition">Close Panel</button>
+                </div>
+            </div>
+        </div>
+    @endif
+
 </div>

@@ -18,7 +18,7 @@
                    class="w-full md:w-64 border border-gray-300 rounded-lg pl-4 pr-4 py-2 focus:border-primary focus:outline-none shadow-sm">
             
             <!-- Dropdown Filter  -->
-            <select wire:model.live="sortFilter" class="w-full md:w-56 border border-gray-300 rounded-lg pl-4 pr-8 py-2 focus:border-primary focus:outline-none shadow-sm bg-white text-black cursor-pointer">
+            <select wire:model.live="sortFilter" class="w-full md:w-56 border border-gray-300 rounded-lg pl-4 pr-8 py-2 focus:border-blue focus:outline-none shadow-sm bg-white text-black cursor-pointer">
                 <option value="newest_request">Newest Request</option>
                 <option value="oldest_request">Oldest Request</option>
                 <option value="nearest_appt">Nearest Appointment</option>
