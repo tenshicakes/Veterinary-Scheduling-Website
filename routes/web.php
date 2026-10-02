@@ -3,6 +3,7 @@
 use App\Livewire\Admin\Home as AdminHome;
 use App\Livewire\Assistant\Appointments as AssistantAppointments;
 use App\Livewire\Assistant\Home as AssistantHome;
+use App\Livewire\Assistant\Profile as AssistantProfile;
 use App\Livewire\Superadmin\Home as SuperadminHome;
 use App\Livewire\User\Appointment as UserAppointment;
 use App\Livewire\User\Home as UserHome;
@@ -42,7 +43,7 @@ Route::middleware(['auth', PreventBackHistory::class])->group(function () {
 
     Route::get('/assistant/home', AssistantHome::class)->name('assistant.home');
     Route::get('/assistant/appointments', AssistantAppointments::class)->name('assistant.appointments');
-
+    Route::get('/assistant/profile', AssistantProfile::class)->name('assistant.profile');
     Route::get('/superadmin/home', SuperadminHome::class)->name('superadmin.home');
 });
 
