@@ -3,7 +3,7 @@
 namespace App\Livewire\Assistant;
 
 use App\Models\Appointment as AppointmentModel;
-use Carbon\Carbon; // I added this to prevent lag when history gets huge
+use Carbon\Carbon; 
 use Livewire\Attributes\Layout;
 use Livewire\Component;
 use Livewire\WithPagination;

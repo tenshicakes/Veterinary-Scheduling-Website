@@ -15,9 +15,9 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 
-Route::get('/', LandingPage::class)->name('landing.page')->name('login');
+Route::get('/', LandingPage::class)->name('login');
 
-// Email verification routes
+
 Route::get('/email/verify', function () {
     return view('auth.verify-email');
 })->middleware('auth')->name('verification.notice');
