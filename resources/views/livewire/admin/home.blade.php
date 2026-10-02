@@ -1,0 +1,1 @@
+<div>This is the admin's home page.</div>

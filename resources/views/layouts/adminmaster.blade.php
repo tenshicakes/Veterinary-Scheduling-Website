@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <title>Dashboard</title>
     @livewireStyles
+    @vite('resources/css/app.css') 
 </head>
 <body>
     <header>
