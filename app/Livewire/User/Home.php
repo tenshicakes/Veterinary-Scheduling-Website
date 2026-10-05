@@ -2,29 +2,31 @@
 
 namespace App\Livewire\User;
 
-use Livewire\Component;
-use Livewire\Attributes\Layout;
-use Illuminate\Support\Facades\Auth;
 use App\Models\Appointment;
 use App\Models\Info;
 use Carbon\Carbon;
+use Illuminate\Support\Facades\Auth;
+use Livewire\Attributes\Layout;
+use Livewire\Component;
 
 #[Layout('layouts.usermaster')]
 class Home extends Component
 {
-// --- S ---
+    // --- S ---
     public $isModalOpen = false;
+
     public $modalTitle = '';
+
     public $modalAppointments = [];
 
     // --- Reschedule variables ---
     public $isRescheduling = false;
+
     public $rescheduleApptId = null;
+
     public $selectedDate = null;
+
     public $selectedTime = null;
-
-
-
 
     public function cancelAppointment($id)
     {
@@ -64,32 +66,29 @@ class Home extends Component
         $this->modalAppointments = [];
     }
 
-    // get the correct data from the reused card 
+    // get the correct data from the reused card
     private function fetchModalData($statuses = [])
     {
         $query = Appointment::select(
-                'appointment_table.*',
-                'info_table.petname as pet_name',
-                'users_table.fullname as patient_name',
-                'service_table.servicename as service_name',
-                'service_table.price as service_price'
-            )
+            'appointment_table.*',
+            'info_table.petname as pet_name',
+            'users_table.fullname as patient_name',
+            'service_table.servicename as service_name',
+            'service_table.price as service_price'
+        )
             ->leftJoin('info_table', 'appointment_table.infoID', '=', 'info_table.infoID')
             ->leftJoin('users_table', 'appointment_table.userID', '=', 'users_table.userID')
             ->leftJoin('service_table', 'appointment_table.serviceID', '=', 'service_table.serviceID')
             ->where('appointment_table.userID', Auth::id());
 
-        if (!empty($statuses)) {
+        if (! empty($statuses)) {
             $query->whereIn('appointment_table.status', $statuses);
         }
 
         return $query->orderBy('appointment_table.created_at', 'desc')->get();
     }
 
-    
-
-
-    //reschedule function
+    // reschedule function
     public function openRescheduleModal($id)
     {
         $this->rescheduleApptId = $id;
@@ -108,8 +107,9 @@ class Home extends Component
 
     public function confirmReschedule()
     {
-        if (!$this->selectedDate || !$this->selectedTime) {
+        if (! $this->selectedDate || ! $this->selectedTime) {
             $this->addError('reschedule', 'Please select both a new date and time.');
+
             return;
         }
 
@@ -118,7 +118,7 @@ class Home extends Component
             ->update([
                 'appointmentdate' => $this->selectedDate,
                 'appointmenttime' => Carbon::parse($this->selectedTime)->format('H:i:s'),
-                'status' => 'Pending' // Reverts to Pending so staff can verify the new slot
+                'status' => 'Pending', // Reverts to Pending so staff can verify the new slot
             ]);
 
         $this->closeRescheduleModal();
@@ -148,10 +148,7 @@ class Home extends Component
         $this->resetErrorBag('reschedule');
     }
 
-    public function refreshAppointments()
-    {
-      
-    }
+    public function refreshAppointments() {}
 
     public function getUnavailableDates()
     {
@@ -165,16 +162,18 @@ class Home extends Component
 
     public function getAvailableTimeSlots()
     {
-        if (!$this->selectedDate) return [];
+        if (! $this->selectedDate) {
+            return [];
+        }
 
         $allSlots = ['09:00 AM', '10:00 AM', '11:00 AM', '12:00 PM', '01:00 PM', '02:00 PM', '03:00 PM', '04:00 PM', '05:00 PM'];
-        
+
         $bookedRecords = Appointment::where('appointmentdate', $this->selectedDate)
             ->whereIn('status', ['Pending', 'Approved'])
             ->pluck('appointmenttime')
             ->toArray();
 
-        $bookedSlots = array_map(function($time) {
+        $bookedSlots = array_map(function ($time) {
             return Carbon::parse($time)->format('h:i A');
         }, $bookedRecords);
 
@@ -183,11 +182,15 @@ class Home extends Component
         $isToday = $this->selectedDate === $now->format('Y-m-d');
 
         foreach ($allSlots as $slot) {
-            if (in_array($slot, $bookedSlots)) continue;
-            
+            if (in_array($slot, $bookedSlots)) {
+                continue;
+            }
+
             if ($isToday) {
-                $slotExpirationTime = Carbon::parse($this->selectedDate . ' ' . $slot)->addMinutes(30);
-                if ($now->isAfter($slotExpirationTime)) continue;
+                $slotExpirationTime = Carbon::parse($this->selectedDate.' '.$slot)->addMinutes(30);
+                if ($now->isAfter($slotExpirationTime)) {
+                    continue;
+                }
             }
             $availableSlots[] = $slot;
         }
@@ -195,19 +198,17 @@ class Home extends Component
         return $availableSlots;
     }
 
-
-
     public function render()
     {
         $userId = Auth::id();
 
         // get all the upcoming appointments
         $allUpcoming = Appointment::select(
-                'appointment_table.*',
-                'info_table.petname as pet_name',
-                'info_table.petimage as pet_image',
-                'service_table.servicename as service_name'
-            )
+            'appointment_table.*',
+            'info_table.petname as pet_name',
+            'info_table.petimage as pet_image',
+            'service_table.servicename as service_name'
+        )
             ->leftJoin('info_table', 'appointment_table.infoID', '=', 'info_table.infoID')
             ->leftJoin('service_table', 'appointment_table.serviceID', '=', 'service_table.serviceID')
             ->where('appointment_table.userID', $userId)
@@ -216,18 +217,17 @@ class Home extends Component
             ->orderBy('appointment_table.appointmenttime', 'asc')
             ->get();
 
-        $nearestAppointment = $allUpcoming->first(); 
-        $otherAppointments = $allUpcoming->skip(1);  
+        $nearestAppointment = $allUpcoming->first();
+        $otherAppointments = $allUpcoming->skip(1);
 
-// Calendar variables
+        // Calendar variables
         $now = Carbon::now();
         $startDate = $now->copy()->addDay()->startOfDay(); // Tomorrow
-        
+
         $availableDates = [];
         for ($i = 0; $i < 3; $i++) {
             $availableDates[] = $startDate->copy()->addDays($i)->format('Y-m-d');
         }
-
 
         $startOfMonth = $startDate->copy()->startOfMonth();
         $daysInMonth = $startOfMonth->daysInMonth;
@@ -254,7 +254,7 @@ class Home extends Component
             'upcomingVisitsCount' => $upcomingVisitsCount,
             'completedVisitsCount' => $completedVisitsCount,
             'totalAppointmentsCount' => $totalAppointmentsCount,
- 
+
             'daysInMonth' => $daysInMonth,
             'firstDayOfWeek' => $firstDayOfWeek,
             'currentMonthName' => $currentMonthName,

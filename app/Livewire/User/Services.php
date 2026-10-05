@@ -2,9 +2,9 @@
 
 namespace App\Livewire\User;
 
-use Livewire\Component;
+use App\Models\Service;
 use Livewire\Attributes\Layout;
-use App\Models\Service; 
+use Livewire\Component;
 
 #[Layout('layouts.usermaster')]
 class Services extends Component
@@ -14,7 +14,7 @@ class Services extends Component
         $services = Service::orderBy('servicename', 'asc')->get();
 
         return view('livewire.user.services', [
-            'services' => $services
+            'services' => $services,
         ]);
     }
 }

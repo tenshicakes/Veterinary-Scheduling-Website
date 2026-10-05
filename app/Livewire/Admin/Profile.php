@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Livewire\Assistant;
+namespace App\Livewire\Admin;
 
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
@@ -9,7 +9,7 @@ use Livewire\Attributes\Layout;
 use Livewire\Component;
 use Livewire\WithFileUploads;
 
-#[Layout('layouts.assistantmaster')]
+#[Layout('layouts.adminmaster')]
 class Profile extends Component
 {
     use WithFileUploads;
@@ -101,6 +101,6 @@ class Profile extends Component
 
     public function render()
     {
-        return view('livewire.assistant.profile');
+        return view('livewire.admin.profile');
     }
 }

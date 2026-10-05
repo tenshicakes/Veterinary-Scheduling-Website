@@ -14,24 +14,24 @@ use Livewire\Component;
 class Appointment extends Component
 {
     public $currentStep = 1;
-    public $selectedPet = null;
-    public $selectedService = null;
-    public $selectedDate = null;
-    public $selectedTime = null;
 
+    public $selectedPet = null;
+
+    public $selectedService = null;
+
+    public $selectedDate = null;
+
+    public $selectedTime = null;
 
     public $referenceNumber = '';
 
     public $notes = '';
 
-
-
     // --- SCHEDULING LOGIC ---
 
-   
     public function getUnavailableDates()
     {
-       
+
         $fullyBookedDates = AppointmentModel::select('appointmentdate')
             ->whereIn('status', ['Pending', 'Approved'])
             ->groupBy('appointmentdate')
@@ -49,7 +49,7 @@ class Appointment extends Component
             return [];
         }
 
-        // Clinic schedule 
+        // Clinic schedule
         $allSlots = ['09:00 AM', '10:00 AM', '11:00 AM', '12:00 PM', '01:00 PM', '02:00 PM', '03:00 PM', '04:00 PM', '05:00 PM'];
 
         $bookedRecords = AppointmentModel::where('appointmentdate', $this->selectedDate)
@@ -57,7 +57,6 @@ class Appointment extends Component
             ->pluck('appointmenttime')
             ->toArray();
 
-        
         $bookedSlots = array_map(function ($time) {
             return Carbon::parse($time)->format('h:i A');
         }, $bookedRecords);
@@ -68,12 +67,10 @@ class Appointment extends Component
 
         foreach ($allSlots as $slot) {
 
-        
             if (in_array($slot, $bookedSlots)) {
                 continue;
             }
 
-         
             if ($isToday) {
                 $slotExpirationTime = Carbon::parse($this->selectedDate.' '.$slot)->addMinutes(30);
                 if ($now->isAfter($slotExpirationTime)) {
@@ -87,18 +84,12 @@ class Appointment extends Component
         return $availableSlots;
     }
 
-  
     public function selectDate($date)
     {
         $this->selectedDate = $date;
         $this->selectedTime = null;
-        $this->resetErrorBag('selection'); 
+        $this->resetErrorBag('selection');
     }
-
-
-
-
-
 
     public function nextStep()
     {
@@ -127,17 +118,11 @@ class Appointment extends Component
         $this->currentStep++;
     }
 
-
     public function previousStep()
     {
         $this->resetErrorBag();
         $this->currentStep--;
     }
-
-
-
-
-
 
     // --- FINAL SUBMISSION ---
 
@@ -150,7 +135,6 @@ class Appointment extends Component
             'referenceNumber.required' => 'Please provide the payment reference number to proceed.',
         ]);
 
-        
         if (! $this->selectedPet || ! $this->selectedService || ! $this->selectedDate || ! $this->selectedTime) {
             $this->addError('selection', 'Missing information. Please go back and check your selections.');
 
@@ -162,7 +146,6 @@ class Appointment extends Component
             $combinedNotes .= ' | Extra Notes: '.$this->notes;
         }
 
-
         AppointmentModel::create([
             'userID' => Auth::id(),
             'infoID' => $this->selectedPet,
@@ -173,23 +156,16 @@ class Appointment extends Component
             'notes' => $combinedNotes,
         ]);
 
-       
         session()->flash('success', 'Your appointment request is pending payment verification!');
 
         return redirect()->route('user.home');
     }
 
-
-
-
-
-
-
     // --- PAGE DISPLAY ---
 
     public function render()
     {
-   
+
         $pets = Info::where('userID', Auth::id())->get();
         $services = Service::where('isactive', true)->get();
         $now = Carbon::now();
@@ -209,10 +185,6 @@ class Appointment extends Component
             $this->selectedDate = $availableDates[0];
         }
 
- 
-
-
-        
         return view('livewire.user.appointment', [
             'pets' => $pets,
             'services' => $services,

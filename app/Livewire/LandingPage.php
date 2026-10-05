@@ -23,7 +23,7 @@ class LandingPage extends Component
     public $phone_number;
 
     public $address;
-    
+
     public $profile_image;
 
     // The toggle variable for the eye icon

@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Livewire\Assistant;
+namespace App\Livewire\Admin;
 
 use App\Models\Appointment as AppointmentModel;
 use Carbon\Carbon;
@@ -8,7 +8,7 @@ use Livewire\Attributes\Layout;
 use Livewire\Component;
 use Livewire\WithPagination;
 
-#[Layout('layouts.assistantmaster')]
+#[Layout('layouts.adminmaster')]
 class Appointments extends Component
 {
     use WithPagination;
@@ -30,6 +30,8 @@ class Appointments extends Component
     public $selectedDate = null;
 
     public $selectedTime = null;
+
+    public $monthOffset = 0;
 
     public function updatingSearch()
     {
@@ -214,7 +216,7 @@ class Appointments extends Component
         $currentMonthName = $startOfMonth->format('F Y');
         $currentYearMonth = $startOfMonth->format('Y-m');
 
-        return view('livewire.assistant.appointments', [
+        return view('livewire.admin.appointments', [
             'appointments' => $appointments,
             'daysInMonth' => $daysInMonth,
             'firstDayOfWeek' => $firstDayOfWeek,
