@@ -31,7 +31,7 @@ class Appointment extends Component
 
     public function getUnavailableDates()
     {
-
+        // 1. Get dates automatically fully booked by the system
         $fullyBookedDates = AppointmentModel::select('appointmentdate')
             ->whereIn('status', ['Pending', 'Approved'])
             ->groupBy('appointmentdate')
@@ -39,19 +39,23 @@ class Appointment extends Component
             ->pluck('appointmentdate')
             ->toArray();
 
-        return $fullyBookedDates;
+        // 2. Get dates manually closed by the Admin
+        $overrides = $this->getOverrides();
+        $adminClosedDates = $overrides['closed_dates'] ?? [];
+
+        // 3. Merge them together so the calendar grays out both
+        return array_unique(array_merge($fullyBookedDates, $adminClosedDates));
     }
 
     public function getAvailableTimeSlots()
     {
-
         if (! $this->selectedDate) {
             return [];
         }
 
-        // Clinic schedule
         $allSlots = ['09:00 AM', '10:00 AM', '11:00 AM', '12:00 PM', '01:00 PM', '02:00 PM', '03:00 PM', '04:00 PM', '05:00 PM'];
 
+        // 1. Get slots taken by other users in the database
         $bookedRecords = AppointmentModel::where('appointmentdate', $this->selectedDate)
             ->whereIn('status', ['Pending', 'Approved'])
             ->pluck('appointmenttime')
@@ -61,21 +65,17 @@ class Appointment extends Component
             return Carbon::parse($time)->format('h:i A');
         }, $bookedRecords);
 
+        // 2. Get specific hours blocked by the Admin for this date
+        $overrides = $this->getOverrides();
+        $adminBlockedSlots = $overrides['blocked_timeslots'][$this->selectedDate] ?? [];
+
         $availableSlots = [];
-        $now = Carbon::now();
-        $isToday = $this->selectedDate === $now->format('Y-m-d');
 
+        // 3. Filter the slots
         foreach ($allSlots as $slot) {
-
-            if (in_array($slot, $bookedSlots)) {
+            // Skip if booked by a user OR blocked by the admin
+            if (in_array($slot, $bookedSlots) || in_array($slot, $adminBlockedSlots)) {
                 continue;
-            }
-
-            if ($isToday) {
-                $slotExpirationTime = Carbon::parse($this->selectedDate.' '.$slot)->addMinutes(30);
-                if ($now->isAfter($slotExpirationTime)) {
-                    continue;
-                }
             }
 
             $availableSlots[] = $slot;
@@ -89,6 +89,14 @@ class Appointment extends Component
         $this->selectedDate = $date;
         $this->selectedTime = null;
         $this->resetErrorBag('selection');
+    }
+
+    private function getOverrides()
+    {
+        if (\Illuminate\Support\Facades\Storage::exists('schedule_overrides.json')) {
+            return json_decode(\Illuminate\Support\Facades\Storage::get('schedule_overrides.json'), true);
+        }
+        return ['closed_dates' => [], 'blocked_timeslots' => []];
     }
 
     public function nextStep()

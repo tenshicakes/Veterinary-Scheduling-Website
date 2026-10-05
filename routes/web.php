@@ -1,18 +1,25 @@
 <?php
 
 use App\Http\Middleware\PreventBackHistory;
+
 use App\Livewire\Admin\Home as AdminHome;
 use App\Livewire\Admin\Appointments as AdminAppointments;
 use App\Livewire\Admin\Profile as AdminProfile;
+use App\Livewire\Admin\Clinicmanage as AdminClinicmanage;
+
 use App\Livewire\Assistant\Appointments as AssistantAppointments;
 use App\Livewire\Assistant\Home as AssistantHome;
 use App\Livewire\Assistant\Profile as AssistantProfile;
+
 use App\Livewire\LandingPage;
+
 use App\Livewire\Superadmin\Home as SuperadminHome;
+
 use App\Livewire\User\Appointment as UserAppointment;
 use App\Livewire\User\Home as UserHome;
 use App\Livewire\User\Profile as UserProfile;
 use App\Livewire\User\Services as UserServices;
+
 use Illuminate\Foundation\Auth\EmailVerificationRequest;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -45,6 +52,8 @@ Route::middleware(['auth', PreventBackHistory::class])->group(function () {
     Route::get('/admin/home', AdminHome::class)->name('admin.home');
     Route::get('/admin/appointments', AdminAppointments::class)->name('admin.appointments');
     Route::get('/admin/profile', \App\Livewire\Admin\Profile::class)->name('admin.profile');
+    Route::get('/admin/clinicmanage', AdminClinicmanage::class)->name('admin.clinicmanage');
+
     Route::get('/assistant/home', AssistantHome::class)->name('assistant.home');
     Route::get('/assistant/appointments', AssistantAppointments::class)->name('assistant.appointments');
     Route::get('/assistant/profile', AssistantProfile::class)->name('assistant.profile');
