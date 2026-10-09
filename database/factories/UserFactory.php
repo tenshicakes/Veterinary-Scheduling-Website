@@ -32,6 +32,7 @@ class UserFactory extends Factory
             'phone_number' => fake()->phoneNumber(),
             'address' => fake()->address(),
             'profile_image' => null,
+            'is_active' => true,
         ];
     }
 

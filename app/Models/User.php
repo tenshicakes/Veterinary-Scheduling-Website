@@ -23,10 +23,12 @@ class User extends Authenticatable implements MustVerifyEmail
         'address',
         'profile_image',
         'role',
+        'is_active',
     ];
 
     protected $hidden = [
         'password',
         'remember_token',
+        'is_active' => 'boolean',
     ];
 }

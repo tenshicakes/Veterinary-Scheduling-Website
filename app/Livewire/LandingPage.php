@@ -48,7 +48,7 @@ class LandingPage extends Component
             'password' => 'required',
         ]);
 
-        if (Auth::attempt(['email' => $this->email, 'password' => $this->password])) {
+        if (Auth::attempt(['email' => $this->email, 'password' => $this->password, 'is_active' => 1])) {
             session()->regenerate();
             $role = Auth::user()->role;
 
@@ -61,7 +61,7 @@ class LandingPage extends Component
             if ($role === 'Superadmin') {
                 return redirect()->route('superadmin.home');
             }
-
+            
             return redirect()->route('user.home');
         }
 
@@ -87,6 +87,7 @@ class LandingPage extends Component
             'address' => $this->address ?? '',
             'profile_image' => $this->profile_image ?? '',
             'role' => 'User',
+            'is_active' => true,
         ]);
 
         // Send verification email
