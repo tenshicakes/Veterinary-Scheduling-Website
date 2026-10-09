@@ -18,7 +18,7 @@
     <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6 md:p-8">
         
         <!-- EMERGENCY SERVICE BANNER -->
-        <div class="bg-red-50 border-l-4 border-red rounded-r-lg p-4 sm:p-6 mb-8 shadow-sm">
+        <div class="bg-red-50 rounded-r-lg p-4 sm:p-6 mb-8 shadow-sm">
             
             <div class="flex flex-col sm:flex-row items-start gap-3 sm:gap-5">
                 

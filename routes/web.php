@@ -6,6 +6,7 @@ use App\Livewire\Admin\Home as AdminHome;
 use App\Livewire\Admin\Appointments as AdminAppointments;
 use App\Livewire\Admin\Profile as AdminProfile;
 use App\Livewire\Admin\Clinicmanage as AdminClinicmanage;
+use App\Livewire\Admin\Usermanage as AdminUsermanage;
 
 use App\Livewire\Assistant\Appointments as AssistantAppointments;
 use App\Livewire\Assistant\Home as AssistantHome;
@@ -53,7 +54,8 @@ Route::middleware(['auth', PreventBackHistory::class])->group(function () {
     Route::get('/admin/appointments', AdminAppointments::class)->name('admin.appointments');
     Route::get('/admin/profile', \App\Livewire\Admin\Profile::class)->name('admin.profile');
     Route::get('/admin/clinicmanage', AdminClinicmanage::class)->name('admin.clinicmanage');
-
+    Route::get('/admin/usermanage', AdminUsermanage::class)->name('admin.usermanage');
+    
     Route::get('/assistant/home', AssistantHome::class)->name('assistant.home');
     Route::get('/assistant/appointments', AssistantAppointments::class)->name('assistant.appointments');
     Route::get('/assistant/profile', AssistantProfile::class)->name('assistant.profile');
