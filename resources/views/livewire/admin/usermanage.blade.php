@@ -14,7 +14,7 @@
     <!-- MAIN CARD -->
     <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6 md:p-8">
         
-        <!-- Toolbar: Search, Filter, and Add Button -->
+
         <div class="flex flex-col md:flex-row justify-between items-center gap-4 mb-6">
             
             <div class="flex flex-col sm:flex-row gap-3 w-full md:w-auto">
@@ -31,7 +31,7 @@
 
             <button wire:click="openAddModal" class="w-full md:w-auto bg-blue text-white font-bold py-2.5 px-6 rounded-lg shadow-sm hover:opacity-90 transition flex items-center justify-center gap-2 shrink-0">
                 <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><line x1="19" x2="19" y1="8" y2="14"/><line x1="22" x2="16" y1="11" y2="11"/></svg>
-                Add Employee
+                Add Account
             </button>
         </div>
 
@@ -40,42 +40,42 @@
             <table class="w-full text-left border-collapse min-w-[800px]">
                 <thead>
                     <tr class="bg-gray-50 border-b border-gray-200">
-                        <th class="p-4 font-bold text-gray-600 text-sm">Name & Email</th>
-                        <th class="p-4 font-bold text-gray-600 text-sm">Phone Number</th>
-                        <th class="p-4 font-bold text-gray-600 text-sm">Role</th>
-                        <th class="p-4 font-bold text-gray-600 text-sm text-center">Status</th>
-                        <th class="p-4 font-bold text-gray-600 text-sm text-right">Actions</th>
+                        <th class="p-4 font-bold text-black text-sm">Name & Email</th>
+                        <th class="p-4 font-bold text-black text-sm">Phone Number</th>
+                        <th class="p-4 font-bold text-black text-sm">Role</th>
+                        <th class="p-4 font-bold text-black text-sm text-center">Status</th>
+                        <th class="p-4 font-bold text-black text-sm text-right">Actions</th>
                     </tr>
                 </thead>
                 <tbody>
                     @forelse($users as $user)
                         <tr class="border-b border-gray-100 hover:bg-gray-50 transition">
                             <td class="p-4">
-                                <p class="font-bold text-gray-800">{{ $user->fullname }}</p>
+                                <p class="font-bold text-black">{{ $user->fullname }}</p>
                                 <p class="text-xs text-gray-500">{{ $user->email }}</p>
                             </td>
-                            <td class="p-4 text-sm text-gray-700">{{ $user->phone_number ?? 'N/A' }}</td>
+                            <td class="p-4 text-sm text-black">{{ $user->phone_number ?? 'N/A' }}</td>
                             <td class="p-4">
-                                <span class="px-3 py-1 rounded-full text-xs font-bold 
-                                    {{ $user->role == 'Admin' ? 'bg-gray-800 text-white' : '' }}
-                                    {{ $user->role == 'Assistant' ? 'bg-blue-100 text-blue' : '' }}
-                                    {{ $user->role == 'User' ? 'bg-gray-100 text-gray-600' : '' }}">
+                                <span class="  text-xs font-bold 
+                                    {{ $user->role == 'Admin' ? ' text-black' : '' }}
+                                    {{ $user->role == 'Assistant' ? 'text-black' : '' }}
+                                    {{ $user->role == 'User' ? 'text-black' : '' }}">
                                     {{ $user->role }}
                                 </span>
                             </td>
                             <td class="p-4 text-center">
-                                <span class="px-3 py-1 rounded-full text-xs font-bold {{ $user->is_active ? 'bg-green-100 text-green-700' : 'bg-red-50 text-red' }}">
+                                <span class="px-3 py-1 rounded-full text-xs font-bold {{ $user->is_active ? ' text-blue' : ' text-red' }}">
                                     {{ $user->is_active ? 'Active' : 'Deactivated' }}
                                 </span>
                             </td>
                             <td class="p-4 text-right flex justify-end gap-2">
-                                <button wire:click="openEditModal({{ $user->userID }})" class="bg-blue-50 text-blue font-bold py-1.5 px-3 rounded text-sm hover:bg-blue-100 transition">
+                                <button wire:click="openEditModal({{ $user->userID }})" class="bg-gray-100 text-black font-bold py-1.5 px-3 rounded text-sm hover:bg-blue-100 transition">
                                     Edit
                                 </button>
                                 
                                 <button wire:confirm="Are you sure you want to {{ $user->is_active ? 'deactivate' : 'activate' }} this account?" 
                                         wire:click="toggleActiveStatus({{ $user->userID }})" 
-                                        class="{{ $user->is_active ? 'bg-red-50 text-red hover:bg-red-100' : 'bg-green-50 text-green-600 hover:bg-green-100' }} font-bold py-1.5 px-3 rounded text-sm transition min-w-[90px]">
+                                        class="{{ $user->is_active ? 'bg-red text-white hover:opacity-90' : 'bg-blue text-white hover:opacity-90' }} font-bold py-1.5 px-3 rounded text-sm transition min-w-[90px]">
                                     {{ $user->is_active ? 'Deactivate' : 'Activate' }}
                                 </button>
                             </td>
@@ -100,8 +100,8 @@
         <div class="fixed inset-0 bg-gray-900/60 z-50 flex items-center justify-center p-4 overflow-y-auto">
             <div class="bg-white rounded-xl shadow-2xl w-full max-w-2xl p-6 md:p-8 mt-10 md:mt-0">
                 
-                <div class="flex justify-between items-center mb-6 border-b border-gray-100 pb-3">
-                    <h3 class="text-2xl font-extrabold text-blue">{{ $isEditMode ? 'Edit Account' : 'Create Employee Account' }}</h3>
+                <div class="flex justify-between items-center mb-6 pb-3">
+                    <h3 class="text-2xl font-extrabold text-blue">{{ $isEditMode ? 'Edit Account' : 'Create an account' }}</h3>
                     <button wire:click="closeModal" class="text-gray-400 hover:text-red transition">
                         <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>
                     </button>
@@ -164,7 +164,7 @@
                     </div>
 
                     <!-- Actions -->
-                    <div class="flex justify-end gap-3 mt-4 pt-4 border-t border-gray-100">
+                    <div class="flex justify-end gap-3 mt-4 pt-4 ">
                         <button type="button" wire:click="closeModal" class="px-6 py-2 rounded-lg font-bold text-gray-600 bg-gray-100 hover:bg-gray-200 transition">Cancel</button>
                         <button type="submit" class="px-6 py-2 rounded-lg font-bold text-white bg-blue hover:opacity-90 shadow-md transition">
                             {{ $isEditMode ? 'Save Changes' : 'Create Account' }}

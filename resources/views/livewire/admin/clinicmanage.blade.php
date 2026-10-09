@@ -158,7 +158,7 @@
         <div class="fixed inset-0 bg-gray-900/60 z-50 flex items-center justify-center p-4">
             <div class="bg-white rounded-xl shadow-2xl w-full max-w-lg p-6 md:p-8">
                 
-                <div class="flex justify-between items-center mb-6 border-b border-gray-100 pb-3">
+                <div class="flex justify-between items-center mb-6  pb-3">
                     <h3 class="text-2xl font-extrabold text-blue">{{ $isEditMode ? 'Edit Service' : 'Add New Service' }}</h3>
                     <button wire:click="closeServiceModal" class="text-gray-400 hover:text-red transition">
                         <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>

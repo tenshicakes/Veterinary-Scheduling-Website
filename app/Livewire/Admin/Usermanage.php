@@ -7,7 +7,7 @@ use Livewire\Attributes\Layout;
 use App\Models\User;
 use Illuminate\Support\Facades\Hash;
 
-#[Layout('layouts.adminmaster')] // Adjust if you use a specific adminmaster layout
+#[Layout('layouts.adminmaster')] 
 class Usermanage extends Component
 {
 
@@ -46,7 +46,7 @@ class Usermanage extends Component
             $this->phone_number = $user->phone_number;
             $this->address = $user->address;
             $this->role = $user->role;
-            $this->password = ''; // Always keep password field blank on load for security
+            $this->password = ''; 
             
             $this->isEditMode = true;
             $this->isModalOpen = true;
@@ -62,14 +62,13 @@ class Usermanage extends Component
     {
         $rules = [
             'fullname' => 'required|string|max:255',
-            // Ignore current user ID when checking for unique email during an edit
             'email' => 'required|email|max:255|unique:users_table,email,' . ($this->isEditMode ? $this->editUserId : 'NULL') . ',userID',
             'role' => 'required|in:User,Assistant,Admin',
-            'phone_number' => 'nullable|string|max:20',
+            'phone_number' => 'nullable|string|max:20|regex:/^[0-9+\-\s()]+$/',
             'address' => 'nullable|string|max:500',
         ];
 
-        // Password is required for new accounts, but optional when editing
+        
         if (!$this->isEditMode) {
             $rules['password'] = 'required|min:8';
         } else {
@@ -87,7 +86,7 @@ class Usermanage extends Component
             $user->address = $this->address;
             $user->role = $this->role;
 
-            // Only update the password if the Admin explicitly typed a new one
+            
             if (!empty($this->password)) {
                 $user->password = Hash::make($this->password);
             }
@@ -102,7 +101,7 @@ class Usermanage extends Component
                 'address' => $this->address,
                 'role' => $this->role,
                 'password' => Hash::make($this->password),
-                'is_active' => true, // Assuming you added this column
+                'is_active' => true, 
             ]);
             session()->flash('success_user', 'New account created successfully.');
         }
@@ -135,7 +134,7 @@ class Usermanage extends Component
             $query->where('role', $this->roleFilter);
         }
 
-        // Fetch results, ordered by role (Admin/Assistant first) then by name
+        
         $users = $query->orderBy('role', 'asc')->orderBy('fullname', 'asc')->get();
 
         return view('livewire.admin.usermanage', [
