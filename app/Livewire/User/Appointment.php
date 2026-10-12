@@ -29,21 +29,37 @@ class Appointment extends Component
 
     // --- SCHEDULING LOGIC ---
 
-    public function getUnavailableDates()
+    public function getUnavailableDates($availableDates)
     {
-        // 1. Get dates automatically fully booked by the system
-        $fullyBookedDates = AppointmentModel::select('appointmentdate')
-            ->whereIn('status', ['Pending', 'Approved'])
-            ->groupBy('appointmentdate')
-            ->havingRaw('COUNT(*) >= 9')
-            ->pluck('appointmentdate')
-            ->toArray();
-
-        // 2. Get dates manually closed by the Admin
         $overrides = $this->getOverrides();
         $adminClosedDates = $overrides['closed_dates'] ?? [];
+        $fullyBookedDates = [];
 
-        // 3. Merge them together so the calendar grays out both
+        $globalOpen = $overrides['operating_hours']['open'] ?? '09:00';
+        $globalClose = $overrides['operating_hours']['close'] ?? '17:00';
+
+        foreach ($availableDates as $date) {
+            $openTime = Carbon::parse($globalOpen);
+            $closeTime = Carbon::parse($globalClose);
+            $totalBaseSlots = 0;
+            
+            while ($openTime->lessThan($closeTime)) {
+                $totalBaseSlots++;
+                $openTime->addHour();
+            }
+
+            $adminBlockedCount = count($overrides['blocked_timeslots'][$date] ?? []);
+            $maxCapacityForThisDay = $totalBaseSlots - $adminBlockedCount;
+
+            $dbCount = AppointmentModel::where('appointmentdate', $date)
+                ->whereIn('status', ['Pending', 'Approved'])
+                ->count();
+
+            if ($maxCapacityForThisDay > 0 && $dbCount >= $maxCapacityForThisDay) {
+                $fullyBookedDates[] = $date;
+            }
+        }
+
         return array_unique(array_merge($fullyBookedDates, $adminClosedDates));
     }
 
@@ -53,9 +69,17 @@ class Appointment extends Component
             return [];
         }
 
-        $allSlots = ['09:00 AM', '10:00 AM', '11:00 AM', '12:00 PM', '01:00 PM', '02:00 PM', '03:00 PM', '04:00 PM', '05:00 PM'];
+        $overrides = $this->getOverrides();
+        
+        $openTime = Carbon::parse($overrides['operating_hours']['open'] ?? '09:00');
+        $closeTime = Carbon::parse($overrides['operating_hours']['close'] ?? '17:00');
+        
+        $allSlots = [];
+        while ($openTime->lessThan($closeTime)) {
+            $allSlots[] = $openTime->format('h:i A');
+            $openTime->addHour();
+        }
 
-        // 1. Get slots taken by other users in the database
         $bookedRecords = AppointmentModel::where('appointmentdate', $this->selectedDate)
             ->whereIn('status', ['Pending', 'Approved'])
             ->pluck('appointmenttime')
@@ -65,19 +89,14 @@ class Appointment extends Component
             return Carbon::parse($time)->format('h:i A');
         }, $bookedRecords);
 
-        // 2. Get specific hours blocked by the Admin for this date
-        $overrides = $this->getOverrides();
         $adminBlockedSlots = $overrides['blocked_timeslots'][$this->selectedDate] ?? [];
 
         $availableSlots = [];
 
-        // 3. Filter the slots
         foreach ($allSlots as $slot) {
-            // Skip if booked by a user OR blocked by the admin
             if (in_array($slot, $bookedSlots) || in_array($slot, $adminBlockedSlots)) {
                 continue;
             }
-
             $availableSlots[] = $slot;
         }
 
@@ -202,7 +221,7 @@ class Appointment extends Component
             'currentYearMonth' => $currentYearMonth,
             'today' => $startDate, // Use start date for calendar logic
             'availableDates' => $availableDates, // Pass the 3 available dates
-            'unavailableDates' => $this->getUnavailableDates(),
+            'unavailableDates' => $this->getUnavailableDates($availableDates),
             'timeSlots' => $this->getAvailableTimeSlots(),
         ]);
     }

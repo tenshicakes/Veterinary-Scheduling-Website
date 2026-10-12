@@ -20,6 +20,8 @@ class Clinicmanage extends Component
     public $servicename = '';
     public $price = '';
     public $description = '';
+    public $openingTime = '09:00';
+    public $closingTime = '17:00';
 
 
     
@@ -40,6 +42,23 @@ class Clinicmanage extends Component
         Storage::put($this->overrideFile, json_encode($data, JSON_PRETTY_PRINT));
     }
 
+    public function mount()
+    {
+        // Load the saved hours when the page loads
+        $overrides = $this->getOverrides();
+        $this->openingTime = $overrides['operating_hours']['open'] ?? '09:00';
+        $this->closingTime = $overrides['operating_hours']['close'] ?? '17:00';
+    }
+
+    public function saveOperatingHours()
+    {
+        $overrides = $this->getOverrides();
+        $overrides['operating_hours']['open'] = $this->openingTime;
+        $overrides['operating_hours']['close'] = $this->closingTime;
+        $this->saveOverrides($overrides);
+        
+        session()->flash('success_schedule', 'Global operating hours updated successfully.');
+    }
  
     public function openAddServiceModal()
     {
@@ -165,7 +184,15 @@ class Clinicmanage extends Component
         
         $closedDates = $overrides['closed_dates'];
         
-        $allSlots = ['09:00 AM', '10:00 AM', '11:00 AM', '12:00 PM', '01:00 PM', '02:00 PM', '03:00 PM', '04:00 PM', '05:00 PM'];
+       $allSlots = [];
+        $openTime = Carbon::parse($this->openingTime);
+        $closeTime = Carbon::parse($this->closingTime);
+        
+        while ($openTime->lessThan($closeTime)) {
+            $allSlots[] = $openTime->format('h:i A');
+            $openTime->addHour();
+        }
+        
         $blockedSlots = [];
         $isDayClosed = false;
 

@@ -124,6 +124,24 @@
                         <div class="p-3 mb-4 text-sm {{ $isDayClosed ? 'bg-red-50 text-red border-red-200' : 'bg-blue-50 text-blue border-blue-200' }} border rounded-lg font-bold">{{ session('success_schedule') }}</div>
                     @endif
 
+                    <!-- Global Operating Hours -->
+                    <div class="bg-blue-50 p-4 rounded-lg border border-blue-200 mb-6">
+                        <h4 class="font-bold text-blue mb-3">Operating Hours</h4>
+                        <div class="flex flex-col md:flex-row gap-4 items-end">
+                            <div class="flex-1">
+                                <label class="block text-xs font-bold text-gray-500 uppercase mb-1">Opening Time</label>
+                                <input type="time" wire:model="openingTime" class="w-full px-3 py-2 border border-gray-300 bg-white rounded focus:outline-none focus:border-blue">
+                            </div>
+                            <div class="flex-1">
+                                <label class="block text-xs font-bold text-gray-500 uppercase mb-1">Closing Time</label>
+                                <input type="time" wire:model="closingTime" class="w-full px-3 py-2 border border-gray-300 bg-white rounded focus:outline-none focus:border-blue">
+                            </div>
+                            <button wire:click="saveOperatingHours" class="bg-blue text-white font-bold py-2 px-6 rounded shadow-sm hover:opacity-90 transition h-[42px]">
+                                Save
+                            </button>
+                        </div>
+                    </div>
+
                     <div class="flex justify-between items-center bg-gray-50 p-4 rounded-lg border border-gray-200 mb-6">
                         <div>
                             <p class="font-bold text-gray-800">Close Entire Day</p>

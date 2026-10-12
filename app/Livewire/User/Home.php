@@ -150,14 +150,46 @@ class Home extends Component
 
     public function refreshAppointments() {}
 
-    public function getUnavailableDates()
+    private function getOverrides()
     {
-        return Appointment::select('appointmentdate')
-            ->whereIn('status', ['Pending', 'Approved'])
-            ->groupBy('appointmentdate')
-            ->havingRaw('COUNT(*) >= 9')
-            ->pluck('appointmentdate')
-            ->toArray();
+        if (\Illuminate\Support\Facades\Storage::exists('schedule_overrides.json')) {
+            return json_decode(\Illuminate\Support\Facades\Storage::get('schedule_overrides.json'), true);
+        }
+        return ['closed_dates' => [], 'blocked_timeslots' => []];
+    }
+
+    public function getUnavailableDates($availableDates)
+    {
+        $overrides = $this->getOverrides();
+        $adminClosedDates = $overrides['closed_dates'] ?? [];
+        $fullyBookedDates = [];
+
+        $globalOpen = $overrides['operating_hours']['open'] ?? '09:00';
+        $globalClose = $overrides['operating_hours']['close'] ?? '17:00';
+
+        foreach ($availableDates as $date) {
+            $openTime = Carbon::parse($globalOpen);
+            $closeTime = Carbon::parse($globalClose);
+            $totalBaseSlots = 0;
+            
+            while ($openTime->lessThan($closeTime)) {
+                $totalBaseSlots++;
+                $openTime->addHour();
+            }
+
+            $adminBlockedCount = count($overrides['blocked_timeslots'][$date] ?? []);
+            $maxCapacityForThisDay = $totalBaseSlots - $adminBlockedCount;
+
+            $dbCount = Appointment::where('appointmentdate', $date)
+                ->whereIn('status', ['Pending', 'Approved'])
+                ->count();
+
+            if ($maxCapacityForThisDay > 0 && $dbCount >= $maxCapacityForThisDay) {
+                $fullyBookedDates[] = $date;
+            }
+        }
+
+        return array_unique(array_merge($fullyBookedDates, $adminClosedDates));
     }
 
     public function getAvailableTimeSlots()
@@ -166,7 +198,16 @@ class Home extends Component
             return [];
         }
 
-        $allSlots = ['09:00 AM', '10:00 AM', '11:00 AM', '12:00 PM', '01:00 PM', '02:00 PM', '03:00 PM', '04:00 PM', '05:00 PM'];
+        $overrides = $this->getOverrides();
+        
+        $openTime = Carbon::parse($overrides['operating_hours']['open'] ?? '09:00');
+        $closeTime = Carbon::parse($overrides['operating_hours']['close'] ?? '17:00');
+        
+        $allSlots = [];
+        while ($openTime->lessThan($closeTime)) {
+            $allSlots[] = $openTime->format('h:i A');
+            $openTime->addHour();
+        }
 
         $bookedRecords = Appointment::where('appointmentdate', $this->selectedDate)
             ->whereIn('status', ['Pending', 'Approved'])
@@ -177,20 +218,13 @@ class Home extends Component
             return Carbon::parse($time)->format('h:i A');
         }, $bookedRecords);
 
+        $adminBlockedSlots = $overrides['blocked_timeslots'][$this->selectedDate] ?? [];
+
         $availableSlots = [];
-        $now = Carbon::now();
-        $isToday = $this->selectedDate === $now->format('Y-m-d');
 
         foreach ($allSlots as $slot) {
-            if (in_array($slot, $bookedSlots)) {
+            if (in_array($slot, $bookedSlots) || in_array($slot, $adminBlockedSlots)) {
                 continue;
-            }
-
-            if ($isToday) {
-                $slotExpirationTime = Carbon::parse($this->selectedDate.' '.$slot)->addMinutes(30);
-                if ($now->isAfter($slotExpirationTime)) {
-                    continue;
-                }
             }
             $availableSlots[] = $slot;
         }
@@ -261,7 +295,7 @@ class Home extends Component
             'currentYearMonth' => $currentYearMonth,
             'today' => $startDate,
             'availableDates' => $availableDates,
-            'unavailableDates' => $this->getUnavailableDates(),
+            'unavailableDates' => $this->getUnavailableDates($availableDates),
             'timeSlots' => $this->getAvailableTimeSlots(),
         ]);
     }
