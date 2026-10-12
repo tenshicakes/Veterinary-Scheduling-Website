@@ -97,11 +97,11 @@
                         @endphp
 
                         <button type="button" wire:click="selectDate('{{ $dateString }}')" 
-                                class="w-full p-2 text-sm font-bold rounded cursor-pointer transition 
-                                {{ $selectedDate === $dateString ? 'ring-2 ring-blue shadow-md' : 'hover:bg-gray-100' }}
-                                {{ $isClosed ? 'bg-red-50 text-red border border-red-200' : 'bg-white text-gray-700 border border-gray-200' }}">
-                            {{ $day }}
-                        </button>
+        class="w-full p-2 text-sm font-bold rounded cursor-pointer transition 
+        {{ $isClosed ? 'bg-red-50 text-red border border-red-200' : 
+            ($selectedDate === $dateString ? 'bg-blue text-white shadow-md border-blue' : 'bg-white text-gray-700 border border-gray-200 hover:bg-gray-100') }}">
+    {{ $day }}
+</button>
                     @endfor
                 </div>
             </div>
@@ -115,25 +115,31 @@
                         <p class="text-sm">Click a date on the calendar to manage its availability.</p>
                     </div>
                 @else
-                    <div class="mb-6 border-b border-gray-100 pb-4">
+                    <div class="mb-6  pb-4">
                         <h3 class="text-xl font-bold text-blue mb-1">{{ \Carbon\Carbon::parse($selectedDate)->format('F d, Y') }}</h3>
-                        <p class="text-sm text-gray-500">Override default scheduling rules for this date.</p>
+                        
                     </div>
 
                     @if (session()->has('success_schedule'))
-                        <div class="p-3 mb-4 text-sm {{ $isDayClosed ? 'bg-red-50 text-red border-red-200' : 'bg-blue-50 text-blue border-blue-200' }} border rounded-lg font-bold">{{ session('success_schedule') }}</div>
-                    @endif
+    <div x-data="{ show: true }" 
+         x-init="setTimeout(() => show = false, 3000)" 
+         x-show="show" 
+         x-transition.duration.500ms
+         class="p-3 mb-4 text-sm bg-blue-50 text-blue border-blue-200 border rounded-lg font-bold">
+        {{ session('success_schedule') }}
+    </div>
+@endif
 
                     <!-- Global Operating Hours -->
-                    <div class="bg-blue-50 p-4 rounded-lg border border-blue-200 mb-6">
-                        <h4 class="font-bold text-blue mb-3">Operating Hours</h4>
+                    <div class="bg-gray-50 p-4 rounded-lg  border-gray-200 border mb-6">
+                        <h4 class="font-bold text-blue mb-3">Universal Operating Hours</h4>
                         <div class="flex flex-col md:flex-row gap-4 items-end">
                             <div class="flex-1">
-                                <label class="block text-xs font-bold text-gray-500 uppercase mb-1">Opening Time</label>
+                                <label class="block  font-bold text-black mb-1">Opening Time</label>
                                 <input type="time" wire:model="openingTime" class="w-full px-3 py-2 border border-gray-300 bg-white rounded focus:outline-none focus:border-blue">
                             </div>
                             <div class="flex-1">
-                                <label class="block text-xs font-bold text-gray-500 uppercase mb-1">Closing Time</label>
+                                <label class="block  font-bold text-black  mb-1">Closing Time</label>
                                 <input type="time" wire:model="closingTime" class="w-full px-3 py-2 border border-gray-300 bg-white rounded focus:outline-none focus:border-blue">
                             </div>
                             <button wire:click="saveOperatingHours" class="bg-blue text-white font-bold py-2 px-6 rounded shadow-sm hover:opacity-90 transition h-[42px]">
