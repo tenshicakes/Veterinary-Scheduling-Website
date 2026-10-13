@@ -10,5 +10,13 @@ class Appointment extends Model
 
     protected $primaryKey = 'appointmentID';
 
-    protected $guarded = [];
+    protected $fillable = [
+    'userID',
+    'infoID', 
+    'serviceID',
+    'appointmentdate',
+    'appointmenttime',
+    'status',
+    'notes',
+];
 }
