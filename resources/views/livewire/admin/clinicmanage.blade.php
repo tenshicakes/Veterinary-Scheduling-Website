@@ -142,7 +142,7 @@
                                 <label class="block  font-bold text-black  mb-1">Closing Time</label>
                                 <input type="time" wire:model="closingTime" class="w-full px-3 py-2 border border-gray-300 bg-white rounded focus:outline-none focus:border-blue">
                             </div>
-                            <button wire:click="saveOperatingHours" class="bg-blue text-white font-bold py-2 px-6 rounded shadow-sm hover:opacity-90 transition h-[42px]">
+                            <button wire:click="saveOperatingHours" class="bg-blue text-white font-bold py-2 px-6 rounded shadow-sm hover:opacity-90 transition h-10.5">
                                 Save
                             </button>
                         </div>

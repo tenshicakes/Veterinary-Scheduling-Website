@@ -94,7 +94,6 @@ class Home extends Component
     {
         $this->rescheduleApptId = $id;
         $this->isRescheduling = true;
-        $this->monthOffset = 0;
         $this->selectedDate = null;
         $this->selectedTime = null;
         $this->resetErrorBag();
@@ -126,21 +125,7 @@ class Home extends Component
         session()->flash('success_cancel', 'Appointment successfully rescheduled and is now pending approval.');
     }
 
-    public function nextMonth()
-    {
-        $this->monthOffset++;
-        $this->selectedDate = null;
-        $this->selectedTime = null;
-    }
-
-    public function previousMonth()
-    {
-        if ($this->monthOffset > 0) {
-            $this->monthOffset--;
-            $this->selectedDate = null;
-            $this->selectedTime = null;
-        }
-    }
+    
 
     public function selectDate($date)
     {
@@ -238,7 +223,7 @@ class Home extends Component
     {
         $userId = Auth::id();
 
-        // get all the upcoming appointments
+  
         $allUpcoming = Appointment::select(
             'appointment_table.*',
             'info_table.petname as pet_name',
@@ -256,9 +241,8 @@ class Home extends Component
         $nearestAppointment = $allUpcoming->first();
         $otherAppointments = $allUpcoming->skip(1);
 
-        // Calendar variables
         $now = Carbon::now();
-        $startDate = $now->copy()->addDay()->startOfDay(); // Tomorrow
+        $startDate = $now->copy()->addDay()->startOfDay();
 
         $availableDates = [];
         for ($i = 0; $i < 3; $i++) {
