@@ -11,12 +11,12 @@ class Appointment extends Model
     protected $primaryKey = 'appointmentID';
 
     protected $fillable = [
-    'userID',
-    'infoID', 
-    'serviceID',
-    'appointmentdate',
-    'appointmenttime',
-    'status',
-    'notes',
-];
+        'userID',
+        'infoID',
+        'serviceID',
+        'appointmentdate',
+        'appointmenttime',
+        'status',
+        'notes',
+    ];
 }

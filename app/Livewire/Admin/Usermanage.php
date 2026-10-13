@@ -3,8 +3,8 @@
 namespace App\Livewire\Admin;
 
 use App\Models\User;
-use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Hash;
 use Livewire\Attributes\Layout;
 use Livewire\Component;
 
@@ -120,9 +120,10 @@ class Usermanage extends Component
         $user = User::where('userID', $id)->first();
 
         if ($user->userID === Auth::id()) {
-        $this->addError('toggle', 'You cannot deactivate your own account.');
-        return;
-    }
+            $this->addError('toggle', 'You cannot deactivate your own account.');
+
+            return;
+        }
 
         if ($user && $user->role !== 'Superadmin') {
             $user->update(['is_active' => ! $user->is_active]);

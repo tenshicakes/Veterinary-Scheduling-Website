@@ -125,8 +125,6 @@ class Home extends Component
         session()->flash('success_cancel', 'Appointment successfully rescheduled and is now pending approval.');
     }
 
-    
-
     public function selectDate($date)
     {
         $this->selectedDate = $date;
@@ -223,7 +221,6 @@ class Home extends Component
     {
         $userId = Auth::id();
 
-  
         $allUpcoming = Appointment::select(
             'appointment_table.*',
             'info_table.petname as pet_name',

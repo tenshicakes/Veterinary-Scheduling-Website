@@ -86,10 +86,31 @@
                 
 
                 <!-- Login Button -->
-                <button type="submit" class="w-full bg-red text-white font-bold py-3 rounded-lg mt-2 hover:bg-red-700 transition flex justify-center items-center gap-2 shadow-md">
-                    Log In
-                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
-                </button>
+<button type="submit" 
+        x-data="{
+            timer: {{ $loginCooldown }},
+            init() {
+                // If Livewire updates the cooldown from a failed attempt, sync it
+                $watch('$wire.loginCooldown', val => this.timer = val);
+                // Tick down by 1 every second
+                setInterval(() => { if (this.timer > 0) this.timer--; }, 1000);
+            }
+        }"
+        :disabled="timer > 0"
+        class="w-full bg-red text-white font-bold py-3 rounded-lg mt-2 hover:bg-red-700 transition flex justify-center items-center gap-2 shadow-md">
+        
+    <!-- Cooldown State -->
+    <span x-show="timer > 0" class="flex items-center gap-2" style="display: none;">
+        <svg class="animate-spin h-5 w-5" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4" fill="none"/><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"/></svg>
+        Try again in<span x-text="timer"></span> (10 minutes)
+    </span>
+
+    <!-- Default State -->
+    <span x-show="timer <= 0" class="flex items-center gap-2">
+        Log In
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
+    </span>
+</button>
             </form>
             
             <!-- dont have an account text -->
@@ -108,6 +129,10 @@
                 <div class="p-3 mb-4 text-sm text-blue-700 bg-blue-100 rounded-lg font-medium">
                     {{ session('verification_notice') }}
                 </div>
+            @endif
+
+            @if (session()->has('register_error'))
+                <div class="p-3 mb-4 text-sm text-red-700 bg-red-100 rounded-lg font-medium">{{ session('register_error') }}</div>
             @endif
 
             <form wire:submit="register" class="flex flex-col gap-5">
@@ -136,14 +161,11 @@
                     @error('phone_number') <span class="text-red-500 text-xs mt-1 block">{{ $message }}</span> @enderror
                 </div>
 
-                <!-- Address (it is optional ) -->
-                <div>
-                    <label class="block text-sm font-bold text-blue mb-2">Address <span class="text-gray-400 font-normal">(Optional)</span></label>
-                    <div class="relative">
-                        <input type="text" wire:model="address" class="w-full px-4 py-3 border border-gray-200 rounded-lg focus:outline-none focus:border-primary shadow-[0_4px_10px_-2px_rgba(0,0,0,0.08)]" placeholder="Marikina City">
+                @if ($registerCooldown > 0)
+                    <div class="p-3 mb-4 text-sm text-yellow-700 bg-yellow-100 rounded-lg font-medium">
+                        Registration limit reached. Try again in {{ $registerCooldown }} seconds.
                     </div>
-                    @error('address') <span class="text-red-500 text-xs mt-1 block">{{ $message }}</span> @enderror
-                </div>
+                @endif
 
                 <div>
                     <label class="block text-sm font-bold text-primary mb-2">Password</label>
@@ -158,9 +180,29 @@
                     </div>
                 </div>
 
-                <button type="submit" class="w-full bg-red text-white font-bold py-3 rounded-lg mt-2 hover:bg-red-700 transition shadow-md">
-                    Sign Up
-                </button>
+                <!-- Register Button -->
+<button type="submit" 
+        x-data="{
+            timer: {{ $registerCooldown }},
+            init() {
+                $watch('$wire.registerCooldown', val => this.timer = val);
+                setInterval(() => { if (this.timer > 0) this.timer--; }, 1000);
+            }
+        }"
+        :disabled="timer > 0"
+        class="w-full bg-red text-white font-bold py-3 rounded-lg mt-2 hover:bg-red-700 transition shadow-md flex justify-center items-center gap-2">
+        
+    <!-- Cooldown State -->
+    <span x-show="timer > 0" class="flex items-center gap-2" style="display: none;">
+        <svg class="animate-spin h-5 w-5" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4" fill="none"/><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"/></svg>
+        Try again in<span x-text="timer"></span>(24 hours)
+    </span>
+
+    <!-- Default State -->
+    <span x-show="timer <= 0" class="flex items-center gap-2">
+        Sign Up
+    </span>
+</button>
             </form>
             
             <p class="mt-8 text-sm text-center text-gray-500 font-medium">

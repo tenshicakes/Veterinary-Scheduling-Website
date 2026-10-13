@@ -49,7 +49,7 @@ class Clinicmanage extends Component
 
     public function mount()
     {
-        
+
         $overrides = $this->getOverrides();
         $this->openingTime = $overrides['operating_hours']['open'] ?? '09:00';
         $this->closingTime = $overrides['operating_hours']['close'] ?? '17:00';
@@ -141,11 +141,11 @@ class Clinicmanage extends Component
         $overrides = $this->getOverrides();
 
         if (in_array($this->selectedDate, $overrides['closed_dates'])) {
-          
+
             $overrides['closed_dates'] = array_values(array_diff($overrides['closed_dates'], [$this->selectedDate]));
             session()->flash('success_schedule', 'Date is now OPEN for bookings.');
         } else {
-         
+
             $overrides['closed_dates'][] = $this->selectedDate;
             unset($overrides['blocked_timeslots'][$this->selectedDate]); // Clear specific time blocks if whole day is closed
             session()->flash('success_schedule', 'Date is now CLOSED (Holiday/Blocked).');
@@ -167,14 +167,13 @@ class Clinicmanage extends Component
         }
 
         if (in_array($time, $overrides['blocked_timeslots'][$this->selectedDate])) {
-           
+
             $overrides['blocked_timeslots'][$this->selectedDate] = array_values(array_diff($overrides['blocked_timeslots'][$this->selectedDate], [$time]));
         } else {
-            
+
             $overrides['blocked_timeslots'][$this->selectedDate][] = $time;
         }
 
-      
         if (empty($overrides['blocked_timeslots'][$this->selectedDate])) {
             unset($overrides['blocked_timeslots'][$this->selectedDate]);
         }

@@ -60,7 +60,7 @@ class Appointments extends Component
         $this->rescheduleApptId = $id;
         $this->reschedulePatientName = $patientName;
         $this->isRescheduling = true;
-        
+
         $this->selectedDate = null;
         $this->selectedTime = null;
         $this->resetErrorBag();
