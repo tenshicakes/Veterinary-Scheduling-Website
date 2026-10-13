@@ -2,27 +2,34 @@
 
 namespace App\Livewire\Admin;
 
-use Livewire\Component;
-use Livewire\Attributes\Layout;
 use App\Models\User;
 use Illuminate\Support\Facades\Hash;
+use Livewire\Attributes\Layout;
+use Livewire\Component;
 
-#[Layout('layouts.adminmaster')] 
+#[Layout('layouts.adminmaster')]
 class Usermanage extends Component
 {
-
     public $search = '';
+
     public $roleFilter = '';
 
     public $isModalOpen = false;
+
     public $isEditMode = false;
+
     public $editUserId = null;
-    
+
     public $fullname = '';
+
     public $email = '';
+
     public $phone_number = '';
+
     public $address = '';
-    public $role = 'Assistant'; 
+
+    public $role = 'Assistant';
+
     public $password = '';
 
     public function openAddModal()
@@ -38,7 +45,7 @@ class Usermanage extends Component
     {
         $this->resetErrorBag();
         $user = User::where('userID', $id)->first();
-        
+
         if ($user) {
             $this->editUserId = $user->userID;
             $this->fullname = $user->fullname;
@@ -46,8 +53,8 @@ class Usermanage extends Component
             $this->phone_number = $user->phone_number;
             $this->address = $user->address;
             $this->role = $user->role;
-            $this->password = ''; 
-            
+            $this->password = '';
+
             $this->isEditMode = true;
             $this->isModalOpen = true;
         }
@@ -62,14 +69,13 @@ class Usermanage extends Component
     {
         $rules = [
             'fullname' => 'required|string|max:255',
-            'email' => 'required|email|max:255|unique:users_table,email,' . ($this->isEditMode ? $this->editUserId : 'NULL') . ',userID',
+            'email' => 'required|email|max:255|unique:users_table,email,'.($this->isEditMode ? $this->editUserId : 'NULL').',userID',
             'role' => 'required|in:User,Assistant,Admin',
             'phone_number' => 'nullable|string|max:20|regex:/^[0-9+\-\s()]+$/',
             'address' => 'nullable|string|max:500',
         ];
 
-        
-        if (!$this->isEditMode) {
+        if (! $this->isEditMode) {
             $rules['password'] = 'required|min:8';
         } else {
             $rules['password'] = 'nullable|min:8';
@@ -79,18 +85,17 @@ class Usermanage extends Component
 
         if ($this->isEditMode) {
             $user = User::where('userID', $this->editUserId)->first();
-            
+
             $user->fullname = $this->fullname;
             $user->email = $this->email;
             $user->phone_number = $this->phone_number;
             $user->address = $this->address;
             $user->role = $this->role;
 
-            
-            if (!empty($this->password)) {
+            if (! empty($this->password)) {
                 $user->password = Hash::make($this->password);
             }
-            
+
             $user->save();
             session()->flash('success_user', 'Account updated successfully.');
         } else {
@@ -101,7 +106,7 @@ class Usermanage extends Component
                 'address' => $this->address,
                 'role' => $this->role,
                 'password' => Hash::make($this->password),
-                'is_active' => true, 
+                'is_active' => true,
             ]);
             session()->flash('success_user', 'New account created successfully.');
         }
@@ -113,7 +118,7 @@ class Usermanage extends Component
     {
         $user = User::where('userID', $id)->first();
         if ($user && $user->role !== 'Superadmin') {
-            $user->update(['is_active' => !$user->is_active]);
+            $user->update(['is_active' => ! $user->is_active]);
             $status = $user->is_active ? 'activated' : 'deactivated';
             session()->flash('success_user', "Account has been {$status}.");
         }
@@ -123,22 +128,21 @@ class Usermanage extends Component
     {
         $query = User::where('role', '!=', 'Superadmin');
 
-        if (!empty($this->search)) {
-            $query->where(function($q) {
-                $q->where('fullname', 'like', '%' . $this->search . '%')
-                  ->orWhere('email', 'like', '%' . $this->search . '%');
+        if (! empty($this->search)) {
+            $query->where(function ($q) {
+                $q->where('fullname', 'like', '%'.$this->search.'%')
+                    ->orWhere('email', 'like', '%'.$this->search.'%');
             });
         }
 
-        if (!empty($this->roleFilter)) {
+        if (! empty($this->roleFilter)) {
             $query->where('role', $this->roleFilter);
         }
 
-        
         $users = $query->orderBy('role', 'asc')->orderBy('fullname', 'asc')->get();
 
         return view('livewire.admin.usermanage', [
-            'users' => $users
+            'users' => $users,
         ]);
     }
 }

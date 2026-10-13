@@ -61,7 +61,7 @@ class LandingPage extends Component
             if ($role === 'Superadmin') {
                 return redirect()->route('superadmin.home');
             }
-            
+
             return redirect()->route('user.home');
         }
 

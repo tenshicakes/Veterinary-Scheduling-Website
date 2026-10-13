@@ -7,6 +7,7 @@ use App\Models\Info;
 use App\Models\Service;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Storage;
 use Livewire\Attributes\Layout;
 use Livewire\Component;
 
@@ -42,7 +43,7 @@ class Appointment extends Component
             $openTime = Carbon::parse($globalOpen);
             $closeTime = Carbon::parse($globalClose);
             $totalBaseSlots = 0;
-            
+
             while ($openTime->lessThan($closeTime)) {
                 $totalBaseSlots++;
                 $openTime->addHour();
@@ -70,10 +71,10 @@ class Appointment extends Component
         }
 
         $overrides = $this->getOverrides();
-        
+
         $openTime = Carbon::parse($overrides['operating_hours']['open'] ?? '09:00');
         $closeTime = Carbon::parse($overrides['operating_hours']['close'] ?? '17:00');
-        
+
         $allSlots = [];
         while ($openTime->lessThan($closeTime)) {
             $allSlots[] = $openTime->format('h:i A');
@@ -112,9 +113,10 @@ class Appointment extends Component
 
     private function getOverrides()
     {
-        if (\Illuminate\Support\Facades\Storage::exists('schedule_overrides.json')) {
-            return json_decode(\Illuminate\Support\Facades\Storage::get('schedule_overrides.json'), true);
+        if (Storage::exists('schedule_overrides.json')) {
+            return json_decode(Storage::get('schedule_overrides.json'), true);
         }
+
         return ['closed_dates' => [], 'blocked_timeslots' => []];
     }
 

@@ -2,38 +2,43 @@
 
 namespace App\Livewire\Admin;
 
-use Livewire\Component;
-use Livewire\Attributes\Layout;
 use App\Models\Service;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Storage;
+use Livewire\Attributes\Layout;
+use Livewire\Component;
 
-#[Layout('layouts.adminmaster')] 
+#[Layout('layouts.adminmaster')]
 class Clinicmanage extends Component
 {
     public $activeTab = 'services';
 
-   
     public $isServiceModalOpen = false;
+
     public $isEditMode = false;
+
     public $serviceID = null;
+
     public $servicename = '';
+
     public $price = '';
+
     public $description = '';
+
     public $openingTime = '09:00';
+
     public $closingTime = '17:00';
 
-
-    
     public $selectedDate = null;
+
     private $overrideFile = 'schedule_overrides.json';
 
-   
     private function getOverrides()
     {
         if (Storage::exists($this->overrideFile)) {
             return json_decode(Storage::get($this->overrideFile), true);
         }
+
         return ['closed_dates' => [], 'blocked_timeslots' => []];
     }
 
@@ -56,10 +61,10 @@ class Clinicmanage extends Component
         $overrides['operating_hours']['open'] = $this->openingTime;
         $overrides['operating_hours']['close'] = $this->closingTime;
         $this->saveOverrides($overrides);
-        
+
         session()->flash('success_schedule', 'Global operating hours updated successfully.');
     }
- 
+
     public function openAddServiceModal()
     {
         $this->resetErrorBag();
@@ -117,12 +122,10 @@ class Clinicmanage extends Component
     {
         $service = Service::where('serviceID', $id)->first();
         if ($service) {
-            $service->update(['isactive' => !$service->isactive]);
+            $service->update(['isactive' => ! $service->isactive]);
             session()->flash('success_service', 'Service status updated.');
         }
     }
-
-   
 
     public function selectDate($date)
     {
@@ -131,7 +134,9 @@ class Clinicmanage extends Component
 
     public function toggleEntireDay()
     {
-        if (!$this->selectedDate) return;
+        if (! $this->selectedDate) {
+            return;
+        }
 
         $overrides = $this->getOverrides();
 
@@ -151,11 +156,13 @@ class Clinicmanage extends Component
 
     public function toggleTimeslot($time)
     {
-        if (!$this->selectedDate) return;
+        if (! $this->selectedDate) {
+            return;
+        }
 
         $overrides = $this->getOverrides();
 
-        if (!isset($overrides['blocked_timeslots'][$this->selectedDate])) {
+        if (! isset($overrides['blocked_timeslots'][$this->selectedDate])) {
             $overrides['blocked_timeslots'][$this->selectedDate] = [];
         }
 
@@ -181,18 +188,18 @@ class Clinicmanage extends Component
 
         $startOfMonth = Carbon::now()->startOfMonth();
         $overrides = $this->getOverrides();
-        
+
         $closedDates = $overrides['closed_dates'];
-        
-       $allSlots = [];
+
+        $allSlots = [];
         $openTime = Carbon::parse($this->openingTime);
         $closeTime = Carbon::parse($this->closingTime);
-        
+
         while ($openTime->lessThan($closeTime)) {
             $allSlots[] = $openTime->format('h:i A');
             $openTime->addHour();
         }
-        
+
         $blockedSlots = [];
         $isDayClosed = false;
 
