@@ -11,6 +11,10 @@ use App\Livewire\Assistant\Home as AssistantHome;
 use App\Livewire\Assistant\Profile as AssistantProfile;
 use App\Livewire\LandingPage;
 use App\Livewire\Superadmin\Home as SuperadminHome;
+use App\Livewire\Superadmin\Appointments as SuperadminAppointments;
+use App\Livewire\Superadmin\Clinicmanage as SuperadminClinicmanage;
+use App\Livewire\Superadmin\Profile as SuperadminProfile;
+use App\Livewire\Superadmin\Usermanage as SuperadminUsermanage;
 use App\Livewire\User\Appointment as UserAppointment;
 use App\Livewire\User\Home as UserHome;
 use App\Livewire\User\Profile as UserProfile;
@@ -49,6 +53,12 @@ Route::middleware(['auth', PreventBackHistory::class])->group(function () {
     Route::get('/admin/profile', Profile::class)->name('admin.profile');
     Route::get('/admin/clinicmanage', AdminClinicmanage::class)->name('admin.clinicmanage');
     Route::get('/admin/usermanage', AdminUsermanage::class)->name('admin.usermanage');
+
+    Route::get('/superadmin/appointments', SuperadminAppointments::class)->name('superadmin.appointments');
+    Route::get('/superadmin/clinicmanage', SuperadminClinicmanage::class)->name('superadmin.clinicmanage');
+    Route::get('/superadmin/profile', SuperadminProfile::class)->name('superadmin.profile');
+    Route::get('/superadmin/usermanage', SuperadminUsermanage::class)->name('superadmin.usermanage');
+    Route::get('/superadmin/home', SuperadminHome::class)->name('superadmin.home');
 
     Route::get('/assistant/home', AssistantHome::class)->name('assistant.home');
     Route::get('/assistant/appointments', AssistantAppointments::class)->name('assistant.appointments');

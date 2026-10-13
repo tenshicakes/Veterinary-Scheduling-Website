@@ -1,0 +1,1 @@
+<h1>this is the clinic management page.</h1>
