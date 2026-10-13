@@ -38,31 +38,31 @@
         
         <nav class="flex-1 px-4 py-6 space-y-2 overflow-y-auto">
             
-            <a href="{{ route('superadmin.home') }}" class="flex items-center gap-3 px-4 py-3 text-sm font-bold rounded-lg {{ request()->routeIs('admin.home') ? 'bg-blue-50 text-primary' : 'text-primary hover:bg-blue hover:text-white' }} transition">
+            <a href="{{ route('superadmin.home') }}" class="flex items-center gap-3 px-4 py-3 text-sm font-bold rounded-lg {{ request()->routeIs('superadmin.home') ? 'bg-blue-50 text-primary' : 'text-primary hover:bg-blue hover:text-white' }} transition">
                 <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                     <path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/>
                 </svg>
                 Home
             </a>
 
-            <a href="{{ route('superadmin.appointments') }}" class="flex items-center gap-3 px-4 py-3 text-sm font-bold rounded-lg {{ request()->routeIs('admin.appointments') ? 'bg-blue-50 text-primary' : 'text-primary hover:bg-blue hover:text-white' }} transition">
+            <a href="{{ route('superadmin.appointments') }}" class="flex items-center gap-3 px-4 py-3 text-sm font-bold rounded-lg {{ request()->routeIs('superadmin.appointments') ? 'bg-blue-50 text-primary' : 'text-primary hover:bg-blue hover:text-white' }} transition">
                 <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                     <rect width="18" height="18" x="3" y="4" rx="2" ry="2"/><line x1="16" x2="16" y1="2" y2="6"/><line x1="8" x2="8" y1="2" y2="6"/><line x1="3" x2="21" y1="10" y2="10"/>
                 </svg>
                 Appointments
             </a>
-            <a href="{{ route('superadmin.clinicmanage') }}" class="flex items-center gap-3 px-4 py-3 text-sm font-bold rounded-lg {{ request()->routeIs('admin.clinicmanage') ? 'bg-blue-50 text-primary' : 'text-primary hover:bg-blue hover:text-white' }} transition">
+            <a href="{{ route('superadmin.clinicmanage') }}" class="flex items-center gap-3 px-4 py-3 text-sm font-bold rounded-lg {{ request()->routeIs('superadmin.clinicmanage') ? 'bg-blue-50 text-primary' : 'text-primary hover:bg-blue hover:text-white' }} transition">
                 <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-hospital preview-icon"><path d="M12 7v4"/><path d="M14 21v-3a2 2 0 0 0-4 0v3"/><path d="M14 9h-4"/><path d="M18 11h2a2 2 0 0 1 2 2v6a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2v-9a2 2 0 0 1 2-2h2"/><path d="M18 21V5a2 2 0 0 0-2-2H8a2 2 0 0 0-2 2v16"/>
                 </svg>
                 Clinic Management
             </a>
 
-            <a href="{{ route('superadmin.usermanage') }}" class="flex items-center gap-3 px-4 py-3 text-sm font-bold rounded-lg {{ request()->routeIs('admin.usermanage') ? 'bg-blue-50 text-primary' : 'text-primary hover:bg-blue hover:text-white' }} transition">
+            <a href="{{ route('superadmin.usermanage') }}" class="flex items-center gap-3 px-4 py-3 text-sm font-bold rounded-lg {{ request()->routeIs('superadmin.usermanage') ? 'bg-blue-50 text-primary' : 'text-primary hover:bg-blue hover:text-white' }} transition">
                 <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-users preview-icon"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><path d="M16 3.128a4 4 0 0 1 0 7.744"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><circle cx="9" cy="7" r="4"/>
             </svg>
                 User Management
             </a>
-            <a href="{{ route('superadmin.profile') }}" class="flex items-center gap-3 px-4 py-3 text-sm font-bold rounded-lg {{ request()->routeIs('admin.profile') ? 'bg-blue-50 text-primary' : 'text-primary hover:bg-blue hover:text-white' }} transition">
+            <a href="{{ route('superadmin.profile') }}" class="flex items-center gap-3 px-4 py-3 text-sm font-bold rounded-lg {{ request()->routeIs('superadmin.profile') ? 'bg-blue-50 text-primary' : 'text-primary hover:bg-blue hover:text-white' }} transition">
                 <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                     <path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/>
                 </svg>
