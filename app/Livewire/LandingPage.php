@@ -35,7 +35,7 @@ class LandingPage extends Component
         $this->resetErrorBag();
     }
 
-    // The method for the eye icon button
+    
     public function togglePassword()
     {
         $this->showPassword = ! $this->showPassword;
