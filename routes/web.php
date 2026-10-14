@@ -7,6 +7,7 @@ use App\Livewire\Admin\Clinicmanage as AdminClinicmanage;
 use App\Livewire\Admin\Home as AdminHome;
 use App\Livewire\Admin\Profile as AdminProfile;
 use App\Livewire\Admin\Usermanage as AdminUsermanage;
+use App\Livewire\Admin\Reports as AdminReports;
 // ASSISTANT PAGES
 use App\Livewire\Assistant\Appointments as AssistantAppointments;
 use App\Livewire\Assistant\Home as AssistantHome;
@@ -71,6 +72,7 @@ Route::middleware(['auth', PreventBackHistory::class])->group(function () {
         Route::get('/admin/profile', AdminProfile::class)->name('admin.profile');
         Route::get('/admin/clinicmanage', AdminClinicmanage::class)->name('admin.clinicmanage');
         Route::get('/admin/usermanage', AdminUsermanage::class)->name('admin.usermanage');
+        Route::get('/admin/reports', AdminReports::class)->name('admin.reports');
     });
 
     // --- SUPERADMIN ONLY ROUTES ---
