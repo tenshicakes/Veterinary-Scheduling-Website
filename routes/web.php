@@ -19,6 +19,7 @@ use App\Livewire\Superadmin\Clinicmanage as SuperadminClinicmanage;
 use App\Livewire\Superadmin\Home as SuperadminHome;
 use App\Livewire\Superadmin\Profile as SuperadminProfile;
 use App\Livewire\Superadmin\Usermanage as SuperadminUsermanage;
+use App\Livewire\Superadmin\Reports as SuperadminReports;
 // USER PAGES
 use App\Livewire\User\Appointment as UserAppointment;
 use App\Livewire\User\Home as UserHome;
@@ -82,6 +83,7 @@ Route::middleware(['auth', PreventBackHistory::class])->group(function () {
         Route::get('/superadmin/clinicmanage', SuperadminClinicmanage::class)->name('superadmin.clinicmanage');
         Route::get('/superadmin/profile', SuperadminProfile::class)->name('superadmin.profile');
         Route::get('/superadmin/usermanage', SuperadminUsermanage::class)->name('superadmin.usermanage');
+        Route::get('/superadmin/reports', SuperadminReports::class)->name('superadmin.reports');
     });
 
 });

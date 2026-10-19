@@ -21,16 +21,17 @@ class Reports extends Component
     public $startDate;
     public $endDate;
     
-    public $availableServices = [];
+    /** @var \Illuminate\Database\Eloquent\Collection */
+    public $availableServices;
     public $selectedServices = [];
     
-    // Checkbox Memory
+    
     public $selectedAppointments = [];
     public $selectAll = false;
 
     public function mount()
     {
-        // Load all services and check them by default
+        // Load services 
         $this->availableServices = Service::orderBy('servicename')->get();
         $this->selectedServices = $this->availableServices->pluck('serviceID')->map(fn($id) => (string) $id)->toArray();
         
@@ -72,7 +73,7 @@ class Reports extends Component
         $this->selectedAppointments = [];
     }
 
-    // Master "Select All" Checkbox Logic
+ 
     public function updatedSelectAll($value)
     {
         if ($value) {

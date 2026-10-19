@@ -27,7 +27,7 @@
 
     <div class="header">
         <h1>Doc Jay's Veterinary Clinic</h1>
-        <p>Operational Appointment Report</p>
+        <p>Appointment Report</p>
     </div>
 
     <div class="meta-info">
