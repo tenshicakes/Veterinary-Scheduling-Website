@@ -6,7 +6,7 @@
     </div>
 
     <!-- Tab Navigation -->
-    <div class="flex gap-4 mb-8 border-b border-gray-200">
+    <div class="flex gap-4 mb-8 ">
         <button wire:click="$set('activeTab', 'services')" 
                 class="px-4 py-2 font-bold transition border-b-4 {{ $activeTab == 'services' ? 'border-blue text-blue' : 'border-transparent text-gray-400 hover:text-gray-600' }}">
             Service & Pricing List
