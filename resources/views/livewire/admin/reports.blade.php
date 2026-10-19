@@ -42,10 +42,9 @@
         <div class="md:col-span-2">
     <label class="block text-xs font-bold text-black uppercase mb-2">Date Range</label>
     
-    <!-- Changed to flex-col for mobile, md:flex-row for desktop -->
+   
     <div class="flex flex-col md:flex-row gap-3">
         
-        <!-- Added w-full md:w-auto so it matches the inputs on mobile but hugs the text on desktop -->
         <select wire:model.live="datePreset" class="w-full md:w-auto px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-blue text-sm bg-white">
             <option value="today">Today</option>
             <option value="this_week">This Week</option>
@@ -58,18 +57,39 @@
     </div>
 </div>
 
-        <!-- Service Checkboxes -->
-        <div class="md:col-span-4 border-t border-gray-100 pt-4">
-            <label class="block text-xs font-bold text-black uppercase mb-3">Included Services</label>
-            <div class="flex flex-wrap gap-4">
-                @foreach($availableServices as $service)
-                    <label class="flex items-center gap-2 cursor-pointer text-sm font-medium text-gray-700 hover:text-blue transition">
-                        <input type="checkbox" wire:model.live="selectedServices" value="{{ $service->serviceID }}" class="w-4 h-4 text-blue rounded border-gray-300 focus:ring-blue">
-                        {{ $service->servicename }}
-                    </label>
-                @endforeach
-            </div>
+        <!-- Service Checkboxes (Alpine Dropdown) -->
+<div class="md:col-span-4  border-gray-100 pt-4" x-data="{ showServices: false }">
+    <label class="block text-xs font-bold text-black uppercase mb-3">Included Services</label>
+    
+    <!-- Dropdown Toggle Button -->
+    <button type="button" @click="showServices = !showServices" 
+            class="w-full flex justify-between items-center px-4 py-3 bg-gray-50 border border-gray-300 rounded-lg hover:bg-gray-100 transition focus:outline-none">
+        <span class="text-sm font-bold text-gray-700">
+            Select Services to Include
+        </span>
+        <!-- Animated Chevron Icon -->
+        <svg class="w-5 h-5 text-gray-500 transition-transform duration-200" 
+             :class="showServices ? 'rotate-180' : ''" 
+             fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+        </svg>
+    </button>
+
+    <!-- Expandable Checkbox Container -->
+    <div x-show="showServices" 
+         x-collapse 
+         class="mt-2 p-5 border border-gray-200 rounded-lg bg-white" 
+         style="display: none;">
+        <div class="flex flex-wrap gap-4">
+            @foreach($availableServices as $service)
+                <label class="flex items-center gap-2 cursor-pointer text-sm font-medium text-gray-700 hover:text-blue transition">
+                    <input type="checkbox" wire:model.live="selectedServices" value="{{ $service->serviceID }}" class="w-4 h-4 text-blue rounded border-gray-300 focus:ring-blue">
+                    {{ $service->servicename }}
+                </label>
+            @endforeach
         </div>
+    </div>
+</div>
     </div>
 
     <!-- Data Grid -->
