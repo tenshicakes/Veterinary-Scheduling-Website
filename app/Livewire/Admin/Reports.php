@@ -88,7 +88,7 @@ class Reports extends Component
         $this->selectAll = false;
     }
 
-    // Centralized Query to ensure Pagination and PDF Export share the exact same data
+
     public function getBaseQueryProperty()
     {
         $query = AppointmentModel::select(
@@ -101,7 +101,7 @@ class Reports extends Component
         ->leftJoin('info_table', 'appointment_table.infoID', '=', 'info_table.infoID')
         ->leftJoin('service_table', 'appointment_table.serviceID', '=', 'service_table.serviceID')
         // Strictly exclude Pending & Rejected
-        ->whereNotIn('appointment_table.status', ['Pending', 'Rejected']);
+        ->whereNotIn('appointment_table.status', ['Pending', 'Rejected', 'Approved']);
 
         if ($this->statusFilter !== 'All') {
             $query->where('appointment_table.status', $this->statusFilter);

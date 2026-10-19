@@ -2,11 +2,12 @@
     
     <div class="mb-8 flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
         <div>
-            <h2 class="text-3xl font-extrabold text-blue">Report Generator</h2>
-            <p class="text-gray-500 mt-1 font-medium">Filter, select, and export operational clinic records.</p>
+            <h2 class="text-3xl font-extrabold text-blue">Reports</h2>
+            <p class="text-gray-500 mt-1 font-medium">Filter, select, and export clinic records.</p>
         </div>
         <button wire:click="generatePDF" class="bg-red text-white font-bold py-3 px-6 rounded-lg shadow-md hover:bg-red-700 transition flex items-center gap-2">
-            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" x2="12" y1="15" y2="3"/></svg>
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-download preview-icon"><path d="M12 15V3"/><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><path d="m7 10 5 5 5-5"/>
+        </svg>
             Generate PDF Report
         </button>
     </div>
@@ -22,17 +23,16 @@
         
         <!-- Search -->
         <div>
-            <label class="block text-xs font-bold text-gray-500 uppercase mb-2">Search</label>
+            <label class="block text-xs font-bold text-black uppercase mb-2">Search</label>
             <input type="text" wire:model.live.debounce.300ms="search" placeholder="Patient or Pet name..." class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-blue text-sm">
         </div>
 
         <!-- Status -->
         <div>
-            <label class="block text-xs font-bold text-gray-500 uppercase mb-2">Status</label>
+            <label class="block text-xs font-bold text-black uppercase mb-2">Status</label>
             <select wire:model.live="statusFilter" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-blue text-sm bg-white">
                 <option value="All">All Valid States</option>
                 <option value="Completed">Completed</option>
-                <option value="Approved">Approved (Upcoming)</option>
                 <option value="No-Show">No-Show</option>
                 <option value="Cancelled">Cancelled</option>
             </select>
@@ -40,22 +40,27 @@
 
         <!-- Date Range -->
         <div class="md:col-span-2">
-            <label class="block text-xs font-bold text-gray-500 uppercase mb-2">Date Range</label>
-            <div class="flex gap-2">
-                <select wire:model.live="datePreset" class="px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-blue text-sm bg-white">
-                    <option value="today">Today</option>
-                    <option value="this_week">This Week</option>
-                    <option value="this_month">This Month</option>
-                    <option value="custom">Custom</option>
-                </select>
-                <input type="date" wire:model.live="startDate" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-blue text-sm">
-                <input type="date" wire:model.live="endDate" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-blue text-sm">
-            </div>
-        </div>
+    <label class="block text-xs font-bold text-black uppercase mb-2">Date Range</label>
+    
+    <!-- Changed to flex-col for mobile, md:flex-row for desktop -->
+    <div class="flex flex-col md:flex-row gap-3">
+        
+        <!-- Added w-full md:w-auto so it matches the inputs on mobile but hugs the text on desktop -->
+        <select wire:model.live="datePreset" class="w-full md:w-auto px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-blue text-sm bg-white">
+            <option value="today">Today</option>
+            <option value="this_week">This Week</option>
+            <option value="this_month">This Month</option>
+            <option value="custom">Custom</option>
+        </select>
+        
+        <input type="date" wire:model.live="startDate" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-blue text-sm">
+        <input type="date" wire:model.live="endDate" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-blue text-sm">
+    </div>
+</div>
 
         <!-- Service Checkboxes -->
         <div class="md:col-span-4 border-t border-gray-100 pt-4">
-            <label class="block text-xs font-bold text-gray-500 uppercase mb-3">Included Services</label>
+            <label class="block text-xs font-bold text-black uppercase mb-3">Included Services</label>
             <div class="flex flex-wrap gap-4">
                 @foreach($availableServices as $service)
                     <label class="flex items-center gap-2 cursor-pointer text-sm font-medium text-gray-700 hover:text-blue transition">
